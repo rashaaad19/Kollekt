@@ -1,5 +1,6 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
+import { createUser } from "../services/firestore_service";
 
 export const handleLogin = async (values, setErrors, navigate) => {
     try {
@@ -31,6 +32,15 @@ export const handleSignup = async (values, setErrors, navigate) => {
             values.password
         );
         const user = userCredential.user;
+        
+        //Update displayName of the user with userName from the form
+        await updateProfile(user, {
+            displayName: values.name,
+        });
+
+        //create new document for the user
+        createUser(user)
+
         console.log("Signup successfully ", user);
         navigate("/home");
     } catch (error) {

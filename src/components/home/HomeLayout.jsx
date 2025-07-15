@@ -11,8 +11,8 @@ const HomeLayout = () => {
   const [imageError, setImageError] = useState("")
   const fileInputRef = useRef();
   const user = auth.currentUser;
+  console.log(user)
   const [posts, setPosts] = useState([]);
-
   useEffect(() => {
     getPosts((postsData) => {
       setPosts(postsData);
@@ -82,7 +82,7 @@ const HomeLayout = () => {
 
         {/* Posts */}
         {posts.map((post) => (
-          <Post post={post} />
+          <Post post={post} key={post.id} />
         ))}
       </div>
 

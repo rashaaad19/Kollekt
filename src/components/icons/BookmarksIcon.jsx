@@ -1,13 +1,13 @@
 import React from "react";
 
-const BookmarksIcon = ({ active, color, fillColor }) => {
+const BookmarksIcon = ({ isBookmarked, color, fillColor }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      fill={active ? fillColor : color}
-      stroke={active ? "current" : "black"}
-      className="size-6"
+      fill={isBookmarked ? fillColor : color}
+      stroke={isBookmarked ? "current" : "black"}
+      className="size-6 transition-colors duration-200 ease-in-out"
     >
       <path
         fillRule="evenodd"

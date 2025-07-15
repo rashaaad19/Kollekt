@@ -4,8 +4,33 @@ import BookmarksIcon from "../icons/BookmarksIcon";
 import CommentIcon from "../icons/CommentIcon";
 import SendIcon from "../icons/SendIcon";
 import Input from "./Input";
+import useStore from "../../store/store";
 
-const Post = ({post}) => {
+const Post = ({ post }) => {
+  const favourites = useStore((state) => state.favourites);
+  const bookmarks = useStore((state) => state.bookmarks);
+  const addFavourite = useStore((state) => state.addFavourite);
+  const addBookmark = useStore((state) => state.addBookmark);
+  const removeFavourite = useStore((state) => state.removeFavourite);
+  const removeBookmark = useStore((state) => state.removeBookmark);
+  const isFavourite = favourites.some((fav) => fav.id === post.id);
+  const isBookmarked = bookmarks.some((bookmark) => bookmark.id === post.id);
+  const toggleFavourite = (post) => {
+    if (isFavourite) {
+      removeFavourite(post);
+    } else {
+      addFavourite(post);
+    }
+  };
+
+  const toggleBookmark = (post) => {
+    if (isBookmarked) {
+      removeBookmark(post);
+    } else {
+      addBookmark(post);
+    }
+  };
+
   return (
     <div className="card bg-base-100  shadow-sm p-4 space-y-3 w-full sm:w-xl">
       {/* Header: Avatar + Username */}
@@ -20,37 +45,44 @@ const Post = ({post}) => {
 
       {/* Post Text */}
       <div>
-        <p className="text-base-content text-left">
-         {post.postContent}
-        </p>
+        <p className="text-base-content text-left">{post.postContent}</p>
       </div>
 
       {/* Post Image */}
       <figure>
         <img
-          src={post.image||'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp'}
+          src={
+            post.image ||
+            "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
+          }
           alt="Post content"
-          className="rounded-lg"
+          className="rounded-lg max-h-96"
         />
       </figure>
 
       {/* Action Icons */}
       <div className="card-actions justify-around px-2 pt-2">
-        <button className="btn btn-circle btn-ghost btn-sm flex items-center gap-1">
+        <button
+          className="btn btn-circle btn-ghost btn-sm flex items-center gap-1"
+          onClick={() => toggleFavourite(post)}
+        >
           <FavsIcon
             color={"transparent"}
             fillColor={"oklch(63% 0.237 25.331)"}
-            active={false}
+            isFavourite={isFavourite}
           />
         </button>
         <button className="btn btn-circle btn-ghost btn-sm">
-          <CommentIcon color={"oklch(76% 0.233 130.85)"} />
+          <CommentIcon color={"oklch(43% 0 0)"} />
         </button>
-        <button className="btn btn-circle btn-ghost btn-sm">
+        <button
+          className="btn btn-circle btn-ghost btn-sm"
+          onClick={() => toggleBookmark(post)}
+        >
           <BookmarksIcon
             fillColor={"oklch(68% 0.169 237.323)"}
             color={"transparent"}
-            active={true}
+            isBookmarked={isBookmarked}
           />
         </button>
       </div>
