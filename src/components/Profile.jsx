@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { auth } from "../firebase";
 import { Link } from "react-router-dom";
-import "./Profile.css";
 import { signOut } from "firebase/auth";
 import {
   addPost,
@@ -60,22 +59,22 @@ const Profile = () => {
 
   return (
     <>
-     {user&& <nav className="navbar">
-        <div className="navbar-left">
+     {user&& <nav >
+        <div >
           <h2>MyApp</h2>
         </div>
-        <div className="navbar-right">
+        <div >
           <span>Hello {user?.displayName}</span>
-          <Link to="/" onClick={handleSignOut} className="signout">
+          <Link to="/" onClick={handleSignOut} >
             Sign Out
           </Link>
         </div>
       </nav>}
 
-      <div className="profile-container">
+      <div >
         <h1>Newsfeed</h1>
 
-        <form onSubmit={handlePostSubmit} className="post-form">
+        <form onSubmit={handlePostSubmit} >
           <input
             type="text"
             placeholder="What's on your mind?"
@@ -87,24 +86,24 @@ const Profile = () => {
 
         {/* ------------------------------------------- */}
 
-        <div className="posts-section">
+        <div >
           {posts.map((post) => (
-            <div key={post.id} className="post">
-              <div className="post-header">
+            <div key={post.id} >
+              <div >
                 <strong>{post.userName}</strong>
 
                 {post.uid === user.uid && (
-                  <div className="post-actions">
+                  <div >
                     {editingPostId === post.id ? (
                       <>
                         <button
-                          className="save-btn"
+                          
                           onClick={() => handleSave(post.id)}
                         >
                           Save
                         </button>
                         <button
-                          className="cancel-btn"
+                          
                           onClick={() => setEditingPostId(null)}
                         >
                           Cancel
@@ -113,7 +112,7 @@ const Profile = () => {
                     ) : (
                       <>
                         <button
-                          className="update-btn"
+                          
                           onClick={() => {
                             setEditingPostId(post.id);
                             setEditedContent(post.postContent);
@@ -122,7 +121,6 @@ const Profile = () => {
                           Update
                         </button>
                         <button
-                          className="delete-btn"
                           onClick={() => handleDelete(post.id)}
                         >
                           Delete
@@ -135,15 +133,14 @@ const Profile = () => {
 
               {editingPostId === post.id ? (
                 <input
-                  className="post-content-input"
                   type="text"
                   value={editedContent}
                   onChange={(e) => setEditedContent(e.target.value)}
                 />
               ) : (
-                <div className="post-bottom">
+                <div >
                   <p>{post.postContent}</p>
-                  <p className="date">
+                  <p >
                     {post.createdAt
                       ? post.createdAt.toDate().toLocaleString()
                       : ""}
