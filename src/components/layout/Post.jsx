@@ -5,7 +5,7 @@ import CommentIcon from "../icons/CommentIcon";
 import SendIcon from "../icons/SendIcon";
 import Input from "./Input";
 
-const Post = () => {
+const Post = ({post}) => {
   return (
     <div className="card bg-base-100  shadow-sm p-4 space-y-3 w-full sm:w-xl">
       {/* Header: Avatar + Username */}
@@ -20,16 +20,15 @@ const Post = () => {
 
       {/* Post Text */}
       <div>
-        <p className="text-base-content">
-          Just had an amazing dinner at this new place downtown. Highly
-          recommend!
+        <p className="text-base-content text-left">
+         {post.postContent}
         </p>
       </div>
 
       {/* Post Image */}
       <figure>
         <img
-          src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
+          src={post.image||'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp'}
           alt="Post content"
           className="rounded-lg"
         />

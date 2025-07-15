@@ -8,8 +8,9 @@ const NewPost = ({
   handleImageSelect,
   fileInputRef,
   handlePhotoClick,
-  imagePreview,
+  postImage,
   handleCancelImg,
+  imageError,
 }) => {
   return (
     <>
@@ -47,10 +48,10 @@ const NewPost = ({
         </div>
 
         {/* Image Preview */}
-        {imagePreview && (
+        {postImage && (
           <div className="relative w-full max-w-sm p-3 rounded-xl bg-white border border-base-300 shadow-lg">
             <img
-              src={imagePreview}
+              src={postImage}
               alt="Preview"
               className="rounded-lg object-cover w-full max-h-48"
             />
@@ -63,6 +64,9 @@ const NewPost = ({
             </button>
           </div>
         )}
+
+        {/* Missing image error */}
+        {<p className={`h-2 text-left text-error text-xs ${imageError?`visible`:`invisible`}`}> {imageError}</p>}
       </form>
     </>
   );

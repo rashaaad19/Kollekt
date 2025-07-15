@@ -24,7 +24,8 @@ export const addPost = async (userData, post) => {
             userName: userData.displayName,
             uid: userData.uid,
             createdAt: serverTimestamp(),
-            postContent: post.content
+            postContent: post.content,
+            image:post.image
         });
         console.log("Document successfully written with ID: ", userData.uid);
     } catch (e) {
