@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Formik } from "formik";
 import { loginSchema } from "../../schemas/UserSchema";
-import { handleLogin } from "../../handlers/authHandlers";
+import { handleLogin } from "../../handlers/formHandlers";
 import FormInput from "./FormInput";
 import useStore from "../../store/store";
 

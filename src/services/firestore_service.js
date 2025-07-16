@@ -28,10 +28,11 @@ export const addPost = async (userData, post) => {
         const postsRef = collection(db, "posts");
         await addDoc(postsRef, {
             userName: userData.displayName,
+            userImage: userData.photoURL,
             uid: userData.uid,
             createdAt: serverTimestamp(),
             postContent: post.content,
-            image: post.image
+            image: post.image,
         });
         console.log("Document successfully written with ID: ", userData.uid);
     } catch (e) {
@@ -72,10 +73,13 @@ export const getPostByIds = async (ids) => {
     return posts;
 }
 
-export const updatePost = async (id, newContent) => {
+export const updatePost = async (id, values) => {
     const postRef = doc(db, 'posts', id);
+    console.log(values)
     await updateDoc(postRef, {
-        postContent: newContent
+        postContent: values.postContent,
+        image:values.image,
+        updatedAt:serverTimestamp(),
     })
 }
 

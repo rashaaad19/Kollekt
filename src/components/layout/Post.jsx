@@ -4,51 +4,58 @@ import CommentIcon from "../icons/CommentIcon";
 import SendIcon from "../icons/SendIcon";
 import Input from "./Input";
 import useStore from "../../store/store";
-import {
-  addBookmarkPost,
-  addFavouritePost,
-  removeBookmarkPost,
-  removeFavouritePost,
-} from "../../services/firestore_service";
 import { auth } from "../../firebase";
+import MoreIcon from "../icons/MoreIcon";
+import { deletePost } from "../../services/firestore_service";
 
-const Post = ({ post }) => {
+const Post = ({ post,handlePostEdit }) => {
   //------------------------------------States-----------------------------
   const bookmarks = useStore((state) => state.bookmarks);
-  const addFavourite = useStore((state) => state.addFavourite);
-  const addBookmark = useStore((state) => state.addBookmark);
-  const removeFavourite = useStore((state) => state.removeFavourite);
-  const removeBookmark = useStore((state) => state.removeBookmark);
   const isBookmarked = bookmarks.some((bookmark) => bookmark === post.id);
-  const user = auth.currentUser;
-  const toggleFavourite = useStore(state => state.toggleFavourite);
-  const favourites = useStore(state => state.favourites);
+  const toggleFavourite = useStore((state) => state.toggleFavourite);
+  const toggleBookmark = useStore((state) => state.toggleBookmark);
+  const favourites = useStore((state) => state.favourites);
   const isFavourite = favourites.includes(post.id);
 
-
-  //------------------------------------Handlers-----------------------------
-
-  // const toggleBookmark = (post) => {
-  //   if (isBookmarked) {
-  //     removeBookmark(post);
-  //     removeBookmarkPost(user, post.id);
-  //   } else {
-  //     addBookmark(post);
-  //     addBookmarkPost(user, post.id);
-  //   }
-  // };
+  const handleDelete = (e, postId) => {
+    console.log("Delete post:", postId);
+    e.currentTarget.blur();
+    deletePost(postId);
+    // Show confirmation and delete post from Firestore
+  };
 
   //------------------------------------Render-----------------------------
   return (
     <div className="card bg-base-100  shadow-sm p-4 space-y-3 w-full sm:w-xl">
       {/* Header: Avatar + Username */}
-      <div className="flex items-center gap-3">
-        <div className="avatar">
-          <div className="w-10 rounded-full">
-            <img src="https://i.pravatar.cc/300?img=5" alt="User Avatar" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="avatar">
+            <div className="w-10 rounded-full">
+              <img
+                src={"https://avatar.iran.liara.run/public/boy?username=Ash"}
+                alt="User Avatar"
+              />
+            </div>
           </div>
+          <h2 className="font-semibold">{post.userName}</h2>
         </div>
-        <h2 className="font-semibold">John Doe</h2>
+        <div className="dropdown dropdown-end">
+          <button tabIndex={0} className="btn btn-sm btn-circle btn-ghost">
+            <MoreIcon />
+          </button>
+          <ul
+            tabIndex={0}
+            className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-32"
+          >
+            <li>
+              <button onClick={(e) => handlePostEdit(e, post)}>Edit</button>
+            </li>
+            <li>
+              <button onClick={(e) => handleDelete(e, post.id)}>Delete</button>
+            </li>
+          </ul>
+        </div>
       </div>
 
       {/* Post Text */}
@@ -85,7 +92,7 @@ const Post = ({ post }) => {
         </button>
         <button
           className="btn btn-circle btn-ghost btn-sm"
-          // onClick={() => toggleBookmark(post)}
+          onClick={() => toggleBookmark(post)}
         >
           <BookmarksIcon
             fillColor={"oklch(68% 0.169 237.323)"}

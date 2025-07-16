@@ -2,12 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import Post from "../layout/Post";
 import PeopleMenu from "./PeopleMenu";
 import NewPost from "./NewPost";
-import {
-  addPost,
-  getPosts,
-  getUserDoc,
-} from "../../services/firestore_service";
+import { addPost, getPosts } from "../../services/firestore_service";
 import useStore from "../../store/store";
+import { auth } from "../../firebase";
+import Modal from "../layout/Modal";
 
 const HomeLayout = () => {
   //------------------------------------States-----------------------------
@@ -16,11 +14,11 @@ const HomeLayout = () => {
   const [postImage, setPostImage] = useState(null);
   const [imageError, setImageError] = useState("");
   const [posts, setPosts] = useState([]);
-  const currentUser = useStore((state) => state.currentUser);
-  const setFavourites = useStore((state) => state.setFavourites);
-  const setBookmarks = useStore((state) => state.setBookmarks);
+  const [clickedPost, setClickedPost] = useState();
+  // const currentUser = useStore((state) => state.currentUser);
   const fileInputRef = useRef();
   const initializeFavourites = useStore((state) => state.initializeFavourites);
+  const currentUser = auth.currentUser;
 
   //------------------------------------Handlers-----------------------------
 
@@ -81,30 +79,42 @@ const HomeLayout = () => {
     setPostImage(null);
   };
 
+
+    const handleEdit = (e, post) => {
+      console.log("Edit post:", post);
+      console.log(post);
+      setClickedPost(post)
+      e.currentTarget.blur();
+      document.getElementById('my_modal_2').showModal();
+    };
+  
   //------------------------------------Render-----------------------------
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-base-200 px-10 py-5">
-      <div className="lg:col-span-2 flex flex-col gap-10">
-        <NewPost
-          postImage={postImage}
-          handlePostSubmit={handlePostSubmit}
-          handleImageSelect={handleImageSelect}
-          handleCancelImg={handleCancelImg}
-          handlePhotoClick={handlePhotoClick}
-          handlePostChange={handlePostChange}
-          imageError={imageError}
-          fileInputRef={fileInputRef}
-        />
+    <>
+      <Modal modalItem={clickedPost} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-base-200 px-10 py-5">
+        <div className="lg:col-span-2 flex flex-col gap-10">
+          <NewPost
+            postImage={postImage}
+            handlePostSubmit={handlePostSubmit}
+            handleImageSelect={handleImageSelect}
+            handleCancelImg={handleCancelImg}
+            handlePhotoClick={handlePhotoClick}
+            handlePostChange={handlePostChange}
+            imageError={imageError}
+            fileInputRef={fileInputRef}
+          />
 
-        {/* Posts */}
-        {posts.map((post) => (
-          <Post post={post} key={post.id} />
-        ))}
+          {/* Posts */}
+          {posts.map((post) => (
+            <Post post={post} key={post.id} handlePostEdit={handleEdit} />
+          ))}
+        </div>
+
+        <PeopleMenu />
       </div>
-
-      <PeopleMenu />
-    </div>
+    </>
   );
 };
 

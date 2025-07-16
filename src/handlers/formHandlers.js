@@ -1,8 +1,8 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 import { auth } from "../firebase";
-import { createUser } from "../services/firestore_service";
+import { createUser, updatePost } from "../services/firestore_service";
 
-export const handleLogin = async (values, setErrors, navigate,setUser) => {
+export const handleLogin = async (values, setErrors, navigate, setUser) => {
     try {
         const userCredential = await signInWithEmailAndPassword(
             auth,
@@ -34,7 +34,7 @@ export const handleSignup = async (values, setErrors, navigate) => {
             values.password
         );
         const user = userCredential.user;
-        
+
         //Update displayName of the user with userName from the form
         await updateProfile(user, {
             displayName: values.name,
@@ -65,4 +65,12 @@ export const handleSignout = async (navigate) => {
     } catch (error) {
         console.error("An error occurred during sign-out:", error);
     }
+}
+
+
+export const handleEditPost = async(values, setSubmitting, id) => {
+ await   updatePost(id,values);
+    setSubmitting(false)
+    document.getElementById("my_modal_2").close();
+
 }

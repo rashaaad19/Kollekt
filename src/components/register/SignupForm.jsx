@@ -1,7 +1,7 @@
 import { Form, Formik } from "formik";
 import { signupSchema } from "../../schemas/UserSchema";
 import { Link, useNavigate } from "react-router-dom";
-import { handleSignup } from "../../handlers/authHandlers";
+import { handleSignup } from "../../handlers/formHandlers";
 import FormInput from "./FormInput";
 
 const SignupForm = () => {
