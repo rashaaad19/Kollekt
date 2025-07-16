@@ -3,9 +3,12 @@ import { Form, Formik } from "formik";
 import { loginSchema } from "../../schemas/UserSchema";
 import { handleLogin } from "../../handlers/authHandlers";
 import FormInput from "./FormInput";
+import useStore from "../../store/store";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const setUser = useStore((state) => state.setCurrentUser);
+
 
   // const handleSignUp = async (event) => {
 
@@ -38,7 +41,7 @@ const LoginForm = () => {
         }}
         validationSchema={loginSchema}
         onSubmit={(values, { setSubmitting, setErrors }) => {
-          handleLogin(values, setErrors, navigate);
+          handleLogin(values, setErrors, navigate,setUser);
           setSubmitting(false);
           console.log(values);
         }}

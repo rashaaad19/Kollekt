@@ -1,36 +1,44 @@
-import React from "react";
 import FavsIcon from "../icons/FavsIcon";
 import BookmarksIcon from "../icons/BookmarksIcon";
 import CommentIcon from "../icons/CommentIcon";
 import SendIcon from "../icons/SendIcon";
 import Input from "./Input";
 import useStore from "../../store/store";
+import {
+  addBookmarkPost,
+  addFavouritePost,
+  removeBookmarkPost,
+  removeFavouritePost,
+} from "../../services/firestore_service";
+import { auth } from "../../firebase";
 
 const Post = ({ post }) => {
-  const favourites = useStore((state) => state.favourites);
+  //------------------------------------States-----------------------------
   const bookmarks = useStore((state) => state.bookmarks);
   const addFavourite = useStore((state) => state.addFavourite);
   const addBookmark = useStore((state) => state.addBookmark);
   const removeFavourite = useStore((state) => state.removeFavourite);
   const removeBookmark = useStore((state) => state.removeBookmark);
-  const isFavourite = favourites.some((fav) => fav.id === post.id);
-  const isBookmarked = bookmarks.some((bookmark) => bookmark.id === post.id);
-  const toggleFavourite = (post) => {
-    if (isFavourite) {
-      removeFavourite(post);
-    } else {
-      addFavourite(post);
-    }
-  };
+  const isBookmarked = bookmarks.some((bookmark) => bookmark === post.id);
+  const user = auth.currentUser;
+  const toggleFavourite = useStore(state => state.toggleFavourite);
+  const favourites = useStore(state => state.favourites);
+  const isFavourite = favourites.includes(post.id);
 
-  const toggleBookmark = (post) => {
-    if (isBookmarked) {
-      removeBookmark(post);
-    } else {
-      addBookmark(post);
-    }
-  };
 
+  //------------------------------------Handlers-----------------------------
+
+  // const toggleBookmark = (post) => {
+  //   if (isBookmarked) {
+  //     removeBookmark(post);
+  //     removeBookmarkPost(user, post.id);
+  //   } else {
+  //     addBookmark(post);
+  //     addBookmarkPost(user, post.id);
+  //   }
+  // };
+
+  //------------------------------------Render-----------------------------
   return (
     <div className="card bg-base-100  shadow-sm p-4 space-y-3 w-full sm:w-xl">
       {/* Header: Avatar + Username */}
@@ -77,7 +85,7 @@ const Post = ({ post }) => {
         </button>
         <button
           className="btn btn-circle btn-ghost btn-sm"
-          onClick={() => toggleBookmark(post)}
+          // onClick={() => toggleBookmark(post)}
         >
           <BookmarksIcon
             fillColor={"oklch(68% 0.169 237.323)"}

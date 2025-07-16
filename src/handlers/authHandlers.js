@@ -2,7 +2,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, up
 import { auth } from "../firebase";
 import { createUser } from "../services/firestore_service";
 
-export const handleLogin = async (values, setErrors, navigate) => {
+export const handleLogin = async (values, setErrors, navigate,setUser) => {
     try {
         const userCredential = await signInWithEmailAndPassword(
             auth,
@@ -10,6 +10,8 @@ export const handleLogin = async (values, setErrors, navigate) => {
             values.password
         );
         const user = userCredential.user;
+        setUser(user)
+
         console.log("Sign in successfully ", user);
         navigate("/home");
     } catch (error) {

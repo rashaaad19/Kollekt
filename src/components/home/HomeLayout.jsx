@@ -2,21 +2,37 @@ import { useEffect, useRef, useState } from "react";
 import Post from "../layout/Post";
 import PeopleMenu from "./PeopleMenu";
 import NewPost from "./NewPost";
-import { auth } from "../../firebase";
-import { addPost, getPosts } from "../../services/firestore_service";
+import {
+  addPost,
+  getPosts,
+  getUserDoc,
+} from "../../services/firestore_service";
+import useStore from "../../store/store";
 
 const HomeLayout = () => {
+  //------------------------------------States-----------------------------
+
   const [newPost, setNewPost] = useState("");
   const [postImage, setPostImage] = useState(null);
-  const [imageError, setImageError] = useState("")
-  const fileInputRef = useRef();
-  const user = auth.currentUser;
-  console.log(user)
+  const [imageError, setImageError] = useState("");
   const [posts, setPosts] = useState([]);
+  const currentUser = useStore((state) => state.currentUser);
+  const setFavourites = useStore((state) => state.setFavourites);
+  const setBookmarks = useStore((state) => state.setBookmarks);
+  const fileInputRef = useRef();
+  const initializeFavourites = useStore((state) => state.initializeFavourites);
+
+  //------------------------------------Handlers-----------------------------
+
+  //TODO: Custom hook
   useEffect(() => {
-    getPosts((postsData) => {
-      setPosts(postsData);
-    });
+    if (currentUser?.uid) {
+      initializeFavourites(currentUser.uid);
+    }
+  }, [currentUser?.uid, initializeFavourites]);
+
+  useEffect(() => {
+    getPosts(setPosts);
   }, []);
 
   const handlePostChange = (event) => {
@@ -24,10 +40,10 @@ const HomeLayout = () => {
   };
 
   const handlePostSubmit = (e) => {
-    setImageError("")
+    setImageError("");
     e.preventDefault();
-    if(!postImage){
-      setImageError('An image is required to submit a post.')
+    if (!postImage) {
+      setImageError("An image is required to submit a post.");
       return;
     }
     console.log(newPost, "from submit handler");
@@ -35,16 +51,16 @@ const HomeLayout = () => {
     setPostImage(null);
     const postData = {
       content: newPost,
-      author: user.displayName,
+      author: currentUser.displayName,
       image: postImage,
     };
-    addPost(user, postData);
+    addPost(currentUser, postData);
   };
 
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
-      setImageError("")
+      setImageError("");
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onloadend = () => {
@@ -52,7 +68,6 @@ const HomeLayout = () => {
         console.log(base64String);
         setPostImage(base64String);
       };
-
     } else {
       setPostImage(null);
     }
@@ -65,6 +80,8 @@ const HomeLayout = () => {
   const handleCancelImg = () => {
     setPostImage(null);
   };
+
+  //------------------------------------Render-----------------------------
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-base-200 px-10 py-5">
