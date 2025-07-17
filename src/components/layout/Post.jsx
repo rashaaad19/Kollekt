@@ -24,6 +24,7 @@ const Post = ({ post, handlePostEdit }) => {
     // Show confirmation and delete post from Firestore
   };
 
+  console.log(import.meta.env.VITE_FIREBASE_API_KEY);
   //------------------------------------Render-----------------------------
   return (
     <div className="card bg-base-100  shadow-sm p-4 space-y-3 w-full sm:w-xl">
