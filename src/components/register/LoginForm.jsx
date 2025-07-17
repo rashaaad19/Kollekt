@@ -7,7 +7,7 @@ import useStore from "../../store/store";
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const setUser = useStore((state) => state.setCurrentUser);
+  const setCurrentUser = useStore((state) => state.setCurrentUser);
 
 
   // const handleSignUp = async (event) => {
@@ -41,7 +41,7 @@ const LoginForm = () => {
         }}
         validationSchema={loginSchema}
         onSubmit={(values, { setSubmitting, setErrors }) => {
-          handleLogin(values, setErrors, navigate,setUser);
+          handleLogin(values, setErrors, navigate,setCurrentUser);
           setSubmitting(false);
           console.log(values);
         }}

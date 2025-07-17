@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { addBookmarkPost, addFavouritePost, getUserDoc, removeBookmarkPost, removeFavouritePost } from "../services/firestore_service";
+import { addBookmarkPost, addFavouritePost, getCurrentUser, getPostByIds, getPosts, getUserDoc, removeBookmarkPost, removeFavouritePost } from "../services/firestore_service";
 
 const useStore = create(persist((set, get) => ({
 
@@ -9,8 +9,42 @@ const useStore = create(persist((set, get) => ({
     bookmarks: [],
     currentPosts: [],
     currentUser: null,
+    isLoading: false,
 
     //------------------Actions-----------------
+
+    getAllPosts: ((setPosts) => {
+        set(({ isLoading: true }))
+        //Pass setter function to control loading state after fetching
+        const unsubscribe = getPosts(setPosts, set);
+
+        return unsubscribe
+
+    }),
+    getFavPosts: (async (setPosts) => {
+        const state = get();
+
+        set(({ isLoading: true }));
+        if (state.favourites.length > 0) {
+            const favPosts = await getPostByIds(state.favourites, set);
+            setPosts(favPosts);
+        } else {
+            setPosts([]);
+        }
+
+    }),
+    getBookmarkPosts: (async (setPosts) => {
+        const state = get();
+
+        set(({ isLoading: true }));
+        if (state.bookmarks.length > 0) {
+            const bookmarkPosts = await getPostByIds(state.bookmarks, set);
+            setPosts(bookmarkPosts);
+        } else {
+            setPosts([]);
+        }
+
+    }),
 
     // Initialize favourites and bookmakrs from Firestore
     initializeFavourites: async (userId) => {
@@ -72,7 +106,12 @@ const useStore = create(persist((set, get) => ({
 
         }
     },
-    setCurrentUser: (currentUser) => set(() => ({ currentUser }))
+    setCurrentUser: async () => {
+        const user = await getCurrentUser();
+        console.log(user);
+        set({ currentUser: user })
+    },
+    signoutUser: (() => set(() => ({ currentUser: null })))
 }), {
     name: 'user-store',
     partialize: (state) => ({

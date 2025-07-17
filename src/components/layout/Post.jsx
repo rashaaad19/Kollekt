@@ -4,12 +4,12 @@ import CommentIcon from "../icons/CommentIcon";
 import SendIcon from "../icons/SendIcon";
 import Input from "./Input";
 import useStore from "../../store/store";
-import { auth } from "../../firebase";
 import MoreIcon from "../icons/MoreIcon";
 import { deletePost } from "../../services/firestore_service";
 
-const Post = ({ post,handlePostEdit }) => {
+const Post = ({ post, handlePostEdit }) => {
   //------------------------------------States-----------------------------
+  const currentUser = useStore((state) => state.currentUser);
   const bookmarks = useStore((state) => state.bookmarks);
   const isBookmarked = bookmarks.some((bookmark) => bookmark === post.id);
   const toggleFavourite = useStore((state) => state.toggleFavourite);
@@ -33,29 +33,33 @@ const Post = ({ post,handlePostEdit }) => {
           <div className="avatar">
             <div className="w-10 rounded-full">
               <img
-                src={"https://avatar.iran.liara.run/public/boy?username=Ash"}
+                src={"/src/assets/avatar-placeholder.png"}
                 alt="User Avatar"
               />
             </div>
           </div>
           <h2 className="font-semibold">{post.userName}</h2>
         </div>
-        <div className="dropdown dropdown-end">
-          <button tabIndex={0} className="btn btn-sm btn-circle btn-ghost">
-            <MoreIcon />
-          </button>
-          <ul
-            tabIndex={0}
-            className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-32"
-          >
-            <li>
-              <button onClick={(e) => handlePostEdit(e, post)}>Edit</button>
-            </li>
-            <li>
-              <button onClick={(e) => handleDelete(e, post.id)}>Delete</button>
-            </li>
-          </ul>
-        </div>
+        {currentUser.uid === post.uid && (
+          <div className="dropdown dropdown-end">
+            <button tabIndex={0} className="btn btn-sm btn-circle btn-ghost">
+              <MoreIcon />
+            </button>
+            <ul
+              tabIndex={0}
+              className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-32"
+            >
+              <li>
+                <button onClick={(e) => handlePostEdit(e, post)}>Edit</button>
+              </li>
+              <li>
+                <button onClick={(e) => handleDelete(e, post.id)}>
+                  Delete
+                </button>
+              </li>
+            </ul>
+          </div>
+        )}{" "}
       </div>
 
       {/* Post Text */}
@@ -76,7 +80,7 @@ const Post = ({ post,handlePostEdit }) => {
       </figure>
 
       {/* Action Icons */}
-      <div className="card-actions justify-around px-2 pt-2">
+      <div className="card-actions justify-start px-2 pt-2">
         <button
           className="btn btn-circle btn-ghost btn-sm flex items-center gap-1"
           onClick={() => toggleFavourite(post)}
@@ -87,9 +91,9 @@ const Post = ({ post,handlePostEdit }) => {
             isFavourite={isFavourite}
           />
         </button>
-        <button className="btn btn-circle btn-ghost btn-sm">
+        {/* <button className="btn btn-circle btn-ghost btn-sm">
           <CommentIcon color={"oklch(43% 0 0)"} />
-        </button>
+        </button> */}
         <button
           className="btn btn-circle btn-ghost btn-sm"
           onClick={() => toggleBookmark(post)}
@@ -102,8 +106,8 @@ const Post = ({ post,handlePostEdit }) => {
         </button>
       </div>
 
-      {/* Add Comment Section */}
-      <div className="flex items-center gap-2 border-t pt-2 mt-2 border-base-300">
+      {/* TODO: Add Comment Section */}
+      {/* <div className="flex items-center gap-2 border-t pt-2 mt-2 border-base-300">
         <div className="avatar">
           <div className="w-8 rounded-full">
             <img src="https://i.pravatar.cc/300?img=12" alt="Your Avatar" />
@@ -117,7 +121,7 @@ const Post = ({ post,handlePostEdit }) => {
         <button className="btn btn-sm btn-primary">
           <SendIcon />
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

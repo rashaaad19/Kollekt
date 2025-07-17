@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import Post from "../layout/Post";
 import PeopleMenu from "./PeopleMenu";
 import NewPost from "./NewPost";
-import { addPost, getPosts } from "../../services/firestore_service";
-import useStore from "../../store/store";
-import { auth } from "../../firebase";
 import Modal from "../layout/Modal";
+import SkeletonPost from "../skeleton/SkeletonPost";
+import { addPost } from "../../services/firestore_service";
+import useStore from "../../store/store";
 
 const HomeLayout = () => {
   //------------------------------------States-----------------------------
@@ -15,10 +15,14 @@ const HomeLayout = () => {
   const [imageError, setImageError] = useState("");
   const [posts, setPosts] = useState([]);
   const [clickedPost, setClickedPost] = useState();
-  // const currentUser = useStore((state) => state.currentUser);
-  const fileInputRef = useRef();
   const initializeFavourites = useStore((state) => state.initializeFavourites);
-  const currentUser = auth.currentUser;
+  const initializeBookmarks = useStore((state) => state.initializeBookmarks);
+  const currentUser = useStore((state) => state.currentUser);
+  const getAllPosts = useStore((state) => state.getAllPosts);
+  const isLoading = useStore((state) => state.isLoading);
+  const fileInputRef = useRef();
+
+
 
   //------------------------------------Handlers-----------------------------
 
@@ -26,12 +30,15 @@ const HomeLayout = () => {
   useEffect(() => {
     if (currentUser?.uid) {
       initializeFavourites(currentUser.uid);
+      initializeBookmarks(currentUser.uid)
     }
-  }, [currentUser?.uid, initializeFavourites]);
+  }, [currentUser?.uid, initializeFavourites,initializeBookmarks]);
 
   useEffect(() => {
-    getPosts(setPosts);
-  }, []);
+    const unsubscribe = getAllPosts(setPosts);
+
+    return () => unsubscribe();
+  }, [getAllPosts]);
 
   const handlePostChange = (event) => {
     setNewPost(event.target.value);
@@ -79,15 +86,14 @@ const HomeLayout = () => {
     setPostImage(null);
   };
 
+  const handleEdit = (e, post) => {
+    console.log("Edit post:", post);
+    console.log(post);
+    setClickedPost(post);
+    e.currentTarget.blur();
+    document.getElementById("my_modal_2").showModal();
+  };
 
-    const handleEdit = (e, post) => {
-      console.log("Edit post:", post);
-      console.log(post);
-      setClickedPost(post)
-      e.currentTarget.blur();
-      document.getElementById('my_modal_2').showModal();
-    };
-  
   //------------------------------------Render-----------------------------
 
   return (
@@ -106,10 +112,14 @@ const HomeLayout = () => {
             fileInputRef={fileInputRef}
           />
 
-          {/* Posts */}
-          {posts.map((post) => (
-            <Post post={post} key={post.id} handlePostEdit={handleEdit} />
-          ))}
+          {!isLoading &&
+            posts.map((post) => (
+              <Post post={post} key={post.id} handlePostEdit={handleEdit} />
+            ))}
+          {isLoading &&
+            Array.from({ length: 6 }).map((_, index) => (
+              <SkeletonPost key={index} />
+            ))}
         </div>
 
         <PeopleMenu />

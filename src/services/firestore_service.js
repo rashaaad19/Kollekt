@@ -1,5 +1,6 @@
 import { doc, setDoc, serverTimestamp, addDoc, collection, onSnapshot, query, orderBy, updateDoc, deleteDoc, arrayUnion, arrayRemove, getDoc, where, documentId, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 export const createUser = async (userData) => {
     console.log(userData);
@@ -14,6 +15,15 @@ export const createUser = async (userData) => {
     } catch (e) {
         console.error("Error adding document: ", e);
     }
+};
+
+export const getCurrentUser = () => {
+    return new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            unsubscribe();
+            resolve(user || null);
+        });
+    });
 };
 
 
@@ -42,7 +52,7 @@ export const addPost = async (userData, post) => {
 }
 
 
-export const getPosts = (callback) => {
+export const getPosts = (callback, zustandSet) => {
     const postsQuery = query(
         collection(db, "posts"),
         orderBy("createdAt", "desc")
@@ -54,12 +64,14 @@ export const getPosts = (callback) => {
             ...doc.data()
         }));
         callback(postsArr);
+
+        zustandSet({ isLoading: false })
     });
 
     return unsub;
 };
 
-export const getPostByIds = async (ids) => {
+export const getPostByIds = async (ids, zustandSet) => {
     const querySnapshot = await getDocs(collection(db, "posts"));
     const posts = [];
     querySnapshot.forEach((doc) => {
@@ -70,6 +82,8 @@ export const getPostByIds = async (ids) => {
             });
         }
     });
+    zustandSet({ isLoading: false })
+
     return posts;
 }
 
@@ -78,8 +92,8 @@ export const updatePost = async (id, values) => {
     console.log(values)
     await updateDoc(postRef, {
         postContent: values.postContent,
-        image:values.image,
-        updatedAt:serverTimestamp(),
+        image: values.image,
+        updatedAt: serverTimestamp(),
     })
 }
 
@@ -94,7 +108,7 @@ export const addFavouritePost = async (userData, id) => {
     try {
         const userRef = doc(db, "users", userData.uid);
         await updateDoc(userRef, {
-            favourites: arrayUnion(id)  // assuming post.id exists
+            favourites: arrayUnion(id)
         });
         console.log("Post added to favourites");
     } catch (error) {

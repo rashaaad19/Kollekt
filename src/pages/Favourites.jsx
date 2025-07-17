@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../components/home/Sidebar";
 import useStore from "../store/store";
-import { getPostByIds } from "./../services/firestore_service";
 import Post from "../components/layout/Post";
+import SkeletonPost from "../components/skeleton/SkeletonPost";
 
 const Favourites = () => {
   const currentUser = useStore((state) => state.currentUser);
   const favourites = useStore((state) => state.favourites); // Get current favourites from store
   const initializeFavourites = useStore((state) => state.initializeFavourites);
+  const isLoading = useStore((state) => state.isLoading);
+  const getFavPosts = useStore((state) => state.getFavPosts);
+
   const [posts, setPosts] = useState([]);
+
+  console.log(isLoading);
 
   // Initialize favourites when component mounts
   //TODO: Custom hook
@@ -20,24 +25,19 @@ const Favourites = () => {
 
   //Effect to run when the favourites state change
   useEffect(() => {
-    const getUserPosts = async () => {
-      if (favourites.length > 0) {
-        const favPosts = await getPostByIds(favourites);
-        setPosts(favPosts);
-      } else {
-        setPosts([]);
-      }
-    };
-    getUserPosts();
-  }, [favourites]);
+    getFavPosts(setPosts);
+  }, [getFavPosts, favourites]);
 
   return (
     <Sidebar>
-      <div>
         {posts.map((post) => (
           <Post post={post} key={post.id} />
         ))}
-      </div>
+              {isLoading &&
+        Array.from({ length: 6 }).map((_, index) => (
+          <SkeletonPost key={index} />
+        ))}
+
     </Sidebar>
   );
 };

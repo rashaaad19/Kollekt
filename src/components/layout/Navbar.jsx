@@ -1,18 +1,18 @@
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../firebase";
 import { handleSignout } from "../../handlers/formHandlers";
 import DrawerIcon from "./../icons/DrawerIcon";
 import LogoutIcon from "../icons/LogoutIcon";
+import useStore from "../../store/store";
 
 const Navbar = () => {
-  const user = auth.currentUser;
-  console.log(user)
   const navigate = useNavigate();
-
+  const signoutUser = useStore((state) => state.signoutUser);
+  const currentUser = useStore((state) => state.currentUser);
+  console.log(currentUser);
   return (
     <div className="navbar bg-primary text-primary-content shadow-sm">
       {/* Mobile drawer toggle button (hamburger icon) */}
-      {user && (
+      {currentUser && (
         <div className="lg:hidden">
           <label
             htmlFor="my-drawer-2"
@@ -26,7 +26,7 @@ const Navbar = () => {
         <a className="pl-2 font-bold text-xl">Kollekt</a>
       </div>
 
-      {user && (
+      {currentUser && (
         <div className="flex gap-2">
           <div className="dropdown dropdown-end">
             <div
@@ -37,7 +37,7 @@ const Navbar = () => {
               <div className="w-10 rounded-full">
                 <img
                   alt="User Avatar"
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                  src="src/assets/avatar-placeholder.png"
                 />
               </div>
             </div>
@@ -48,7 +48,7 @@ const Navbar = () => {
               <li>
                 <a
                   className="font-bold"
-                  onClick={() => handleSignout(navigate)}
+                  onClick={() => handleSignout(navigate, signoutUser)}
                 >
                   <LogoutIcon /> Logout
                 </a>

@@ -3,9 +3,11 @@ import { signupSchema } from "../../schemas/UserSchema";
 import { Link, useNavigate } from "react-router-dom";
 import { handleSignup } from "../../handlers/formHandlers";
 import FormInput from "./FormInput";
+import useStore from "../../store/store";
 
 const SignupForm = () => {
   const navigate = useNavigate();
+  const setCurrentUser = useStore((state) => state.setCurrentUser);
 
   return (
     
@@ -17,7 +19,7 @@ const SignupForm = () => {
       }}
       validationSchema={signupSchema}
       onSubmit={(values, { setSubmitting, setErrors }) => {
-        handleSignup(values, setErrors, navigate);
+        handleSignup(values, setErrors, navigate,setCurrentUser);
         setSubmitting(false);
         console.log(values);
       }}

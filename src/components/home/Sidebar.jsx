@@ -31,7 +31,12 @@ const Sidebar = ({ children }) => {
             >
               {({ isActive }) => (
                 <>
-                  <HomeIcon active={isActive} className="w-5 h-5" />
+                  <HomeIcon
+                    active={isActive}
+                    color="current"
+                    fillColor="oklch(71% 0.143 215.221)"
+                    className="w-5 h-5"
+                  />
                   <span
                     className={`${
                       isActive
@@ -54,7 +59,7 @@ const Sidebar = ({ children }) => {
               {({ isActive }) => (
                 <>
                   <FavsIcon
-                    active={isActive}
+                    isFavourite={isActive}
                     color="current"
                     fillColor="oklch(71% 0.143 215.221)"
                   />
@@ -81,7 +86,7 @@ const Sidebar = ({ children }) => {
                 <>
                   <BookmarksIcon
                     className="w-5 h-5"
-                    active={isActive}
+                    isBookmarked={isActive}
                     color="current"
                     fillColor="oklch(71% 0.143 215.221)"
                   />
@@ -99,7 +104,8 @@ const Sidebar = ({ children }) => {
             </NavLink>
           </li>
 
-          <li>
+          {/*TODO:  Make Profile page */}
+          {/* <li>
             <NavLink
               to="/profile"
               className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
@@ -119,7 +125,7 @@ const Sidebar = ({ children }) => {
                 </>
               )}
             </NavLink>
-          </li>
+          </li> */}
         </ul>
       </div>
     </div>
