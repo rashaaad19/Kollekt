@@ -3,6 +3,7 @@ import { handleSignout } from "../../handlers/formHandlers";
 import DrawerIcon from "./../icons/DrawerIcon";
 import LogoutIcon from "../icons/LogoutIcon";
 import useStore from "../../store/store";
+import userAvatar from '../../assets/avatar-placeholder.png';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const Navbar = () => {
               <div className="w-10 rounded-full">
                 <img
                   alt="User Avatar"
-                  src="src/assets/avatar-placeholder.png"
+                  src={userAvatar}
                 />
               </div>
             </div>

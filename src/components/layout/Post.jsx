@@ -6,7 +6,7 @@ import Input from "./Input";
 import useStore from "../../store/store";
 import MoreIcon from "../icons/MoreIcon";
 import { deletePost } from "../../services/firestore_service";
-
+import userAvatar from "../../assets/avatar-placeholder.png"
 const Post = ({ post, handlePostEdit }) => {
   //------------------------------------States-----------------------------
   const currentUser = useStore((state) => state.currentUser);
@@ -34,7 +34,7 @@ const Post = ({ post, handlePostEdit }) => {
           <div className="avatar">
             <div className="w-10 rounded-full">
               <img
-                src={"/src/assets/avatar-placeholder.png"}
+                src={userAvatar}
                 alt="User Avatar"
               />
             </div>
