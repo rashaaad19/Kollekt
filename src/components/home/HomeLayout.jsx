@@ -15,6 +15,7 @@ const HomeLayout = () => {
   const [imageError, setImageError] = useState("");
   const [posts, setPosts] = useState([]);
   const [clickedPost, setClickedPost] = useState();
+  const [modalType, setModalType] =useState()
   const initializeFavourites = useStore((state) => state.initializeFavourites);
   const initializeBookmarks = useStore((state) => state.initializeBookmarks);
   const currentUser = useStore((state) => state.currentUser);
@@ -22,17 +23,15 @@ const HomeLayout = () => {
   const isLoading = useStore((state) => state.isLoading);
   const fileInputRef = useRef();
 
-
-
   //------------------------------------Handlers-----------------------------
 
   //TODO: Custom hook
   useEffect(() => {
     if (currentUser?.uid) {
       initializeFavourites(currentUser.uid);
-      initializeBookmarks(currentUser.uid)
+      initializeBookmarks(currentUser.uid);
     }
-  }, [currentUser?.uid, initializeFavourites,initializeBookmarks]);
+  }, [currentUser?.uid, initializeFavourites, initializeBookmarks]);
 
   useEffect(() => {
     const unsubscribe = getAllPosts(setPosts);
@@ -90,6 +89,15 @@ const HomeLayout = () => {
     console.log("Edit post:", post);
     console.log(post);
     setClickedPost(post);
+    setModalType('edit')
+    e.currentTarget.blur();
+    document.getElementById("my_modal_2").showModal();
+  };
+
+  const handleViewComments = (e,post) => {
+    console.log("Show comments!");
+    setClickedPost(post);
+    setModalType('comments')
     e.currentTarget.blur();
     document.getElementById("my_modal_2").showModal();
   };
@@ -98,7 +106,8 @@ const HomeLayout = () => {
 
   return (
     <>
-      <Modal modalItem={clickedPost} />
+      <Modal modalItem={clickedPost} type={modalType} />
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-base-200 px-10 py-5">
         <div className="lg:col-span-2 flex flex-col gap-10">
           <NewPost
@@ -114,7 +123,12 @@ const HomeLayout = () => {
 
           {!isLoading &&
             posts.map((post) => (
-              <Post post={post} key={post.id} handlePostEdit={handleEdit} />
+              <Post
+                post={post}
+                key={post.id}
+                handlePostEdit={handleEdit}
+                handleViewComments={handleViewComments}
+              />
             ))}
           {isLoading &&
             Array.from({ length: 6 }).map((_, index) => (

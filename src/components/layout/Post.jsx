@@ -6,8 +6,9 @@ import Input from "./Input";
 import useStore from "../../store/store";
 import MoreIcon from "../icons/MoreIcon";
 import { deletePost } from "../../services/firestore_service";
-import userAvatar from "../../assets/avatar-placeholder.png"
-const Post = ({ post, handlePostEdit }) => {
+import userAvatar from "../../assets/avatar-placeholder.png";
+import { useState } from "react";
+const Post = ({ post, handlePostEdit, handleViewComments }) => {
   //------------------------------------States-----------------------------
   const currentUser = useStore((state) => state.currentUser);
   const bookmarks = useStore((state) => state.bookmarks);
@@ -16,6 +17,7 @@ const Post = ({ post, handlePostEdit }) => {
   const toggleBookmark = useStore((state) => state.toggleBookmark);
   const favourites = useStore((state) => state.favourites);
   const isFavourite = favourites.includes(post.id);
+  const [showCommentInput, setShowCommentInput] = useState(false);
 
   const handleDelete = (e, postId) => {
     console.log("Delete post:", postId);
@@ -24,7 +26,12 @@ const Post = ({ post, handlePostEdit }) => {
     // Show confirmation and delete post from Firestore
   };
 
-  console.log(import.meta.env.VITE_FIREBASE_API_KEY);
+  const handleCommentClick = () => {
+    console.log("clicked");
+    setShowCommentInput(!showCommentInput);
+  };
+
+
   //------------------------------------Render-----------------------------
   return (
     <div className="card bg-base-100  shadow-sm p-4 space-y-3 w-full sm:w-xl">
@@ -33,10 +40,7 @@ const Post = ({ post, handlePostEdit }) => {
         <div className="flex items-center gap-3">
           <div className="avatar">
             <div className="w-10 rounded-full">
-              <img
-                src={userAvatar}
-                alt="User Avatar"
-              />
+              <img src={userAvatar} alt="User Avatar" />
             </div>
           </div>
           <h2 className="font-semibold">{post.userName}</h2>
@@ -92,9 +96,12 @@ const Post = ({ post, handlePostEdit }) => {
             isFavourite={isFavourite}
           />
         </button>
-        {/* <button className="btn btn-circle btn-ghost btn-sm">
+        <button
+          className="btn btn-circle btn-ghost btn-sm"
+          onClick={handleCommentClick}
+        >
           <CommentIcon color={"oklch(43% 0 0)"} />
-        </button> */}
+        </button>
         <button
           className="btn btn-circle btn-ghost btn-sm"
           onClick={() => toggleBookmark(post)}
@@ -106,23 +113,34 @@ const Post = ({ post, handlePostEdit }) => {
           />
         </button>
       </div>
-
+      <button
+        onClick={(e) => handleViewComments(e, post)}
+        className="self-start px-2 text-sm text-neutral cursor-pointer"
+      >
+        View all comments
+      </button>
       {/* TODO: Add Comment Section */}
-      {/* <div className="flex items-center gap-2 border-t pt-2 mt-2 border-base-300">
-        <div className="avatar">
-          <div className="w-8 rounded-full">
-            <img src="https://i.pravatar.cc/300?img=12" alt="Your Avatar" />
+      <div
+        className={`transition-all duration-200 ease-in-out overflow-hidden
+    ${showCommentInput ? "max-h-40 opacity-100 mt-2" : "max-h-0"}
+  `}
+      >
+        <div className="flex items-center gap-2 border-t pt-2 border-base-300">
+          <div className="avatar">
+            <div className="w-8 rounded-full">
+              <img src={userAvatar} alt="Your Avatar" />
+            </div>
           </div>
+          <Input
+            type="text"
+            placeholder="Add a comment..."
+            className="input input-bordered input-sm flex-1 focus:outline-none focus:ring-0 focus:border-primary"
+          />
+          <button className="btn btn-sm btn-primary">
+            <SendIcon />
+          </button>
         </div>
-        <Input
-          type="text"
-          placeholder="Add a comment..."
-          className="input input-bordered input-sm flex-1 focus:outline-none focus:ring-0 focus:border-primary"
-        />
-        <button className="btn btn-sm btn-primary">
-          <SendIcon />
-        </button>
-      </div> */}
+      </div>
     </div>
   );
 };
