@@ -1,4 +1,4 @@
-import { doc, setDoc, serverTimestamp, addDoc, collection, onSnapshot, query, orderBy, updateDoc, deleteDoc, arrayUnion, arrayRemove, getDoc, where, documentId, getDocs } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp, addDoc, collection, onSnapshot, query, orderBy, updateDoc, deleteDoc, arrayUnion, arrayRemove, getDoc, where, documentId, getDocs, increment } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -103,26 +103,38 @@ export const deletePost = async (id) => {
 }
 
 
-export const addFavouritePost = async (userData, id) => {
-    console.log(userData, id)
+export const addFavouritePost = async (userData, postId) => {
+    console.log(userData, postId)
+    const userRef = doc(db, "users", userData.uid);
+    const postRef = doc(db, "posts", postId);
+
     try {
-        const userRef = doc(db, "users", userData.uid);
         await updateDoc(userRef, {
-            favourites: arrayUnion(id)
+            favourites: arrayUnion(postId),
         });
+        await updateDoc(postRef, {
+            favouritesNumber: increment(1),
+        })
         console.log("Post added to favourites");
     } catch (error) {
         console.error("Error adding to favourites:", error);
     }
 };
 
-export const removeFavouritePost = async (userData, id) => {
+export const removeFavouritePost = async (userData, postId) => {
+    const userRef = doc(db, "users", userData.uid);
+    const postRef = doc(db, "posts", postId);
+
     try {
-        const userRef = doc(db, "users", userData.uid);
         await updateDoc(userRef, {
-            favourites: arrayRemove(id)
+            favourites: arrayRemove(postId),
+
         });
-        console.log("Post removed from favourites", id);
+        await updateDoc(postRef, {
+            favouritesNumber: increment(-1),
+        })
+
+        console.log("Post removed from favourites", postId);
     } catch (error) {
         console.error("Error removing from favourites:", error);
     }
@@ -132,23 +144,33 @@ export const removeFavouritePost = async (userData, id) => {
 
 
 
-export const addBookmarkPost = async (userData, id) => {
+export const addBookmarkPost = async (userData, postId) => {
+    const userRef = doc(db, 'users', userData.uid);
+    const postRef = doc(db, "posts", postId);
+
     try {
-        const userRef = doc(db, 'users', userData.uid);
         await updateDoc(userRef, {
-            bookmarks: arrayUnion(id)
+            bookmarks: arrayUnion(postId)
         });
+        await updateDoc(postRef, {
+            bookmarksNumber: increment(1),
+        })
         console.log('Post added to bookmarks')
     } catch (error) {
         console.log("Error adding to bookmarks: ", error)
     }
 }
-export const removeBookmarkPost = async (userData, id) => {
+export const removeBookmarkPost = async (userData, postId) => {
+    const userRef = doc(db, 'users', userData.uid);
+    const postRef = doc(db, "posts", postId);
+
     try {
-        const userRef = doc(db, 'users', userData.uid);
         await updateDoc(userRef, {
-            bookmarks: arrayRemove(id)
+            bookmarks: arrayRemove(postId)
         });
+        await updateDoc(postRef, {
+            bookmarksNumber: increment(-1),
+        })
         console.log('Post removed from bookmarks')
     } catch (error) {
         console.log("Error removing from bookmarks: ", error)
@@ -156,3 +178,45 @@ export const removeBookmarkPost = async (userData, id) => {
 }
 
 
+export const addComment = async (commentData, postID) => {
+    const commentsRef = collection(db, 'posts', postID, 'comments');
+    const postRef = doc(db, 'posts', postID)
+    console.log(commentData)
+    try {
+        //Add the new comment to the sub collection
+        await addDoc(commentsRef, {
+            uid: commentData.uid,
+            userName: commentData.userName,
+            // userImg : commentData.photoURL,
+            createdAt: serverTimestamp(),
+            comment: commentData.comment,
+
+        })
+        await updateDoc(postRef, {
+            commentsCount: increment(1),
+        })
+
+        console.log('Added comment', commentData.comment, ' To post: ', postID, ' Successfully')
+    } catch (error) {
+        console.log('Error adding comment to post: ', postID, error)
+    }
+}
+
+export const getComments = (callback, postID) => {
+    const commentsQuery = query(
+        collection(db, 'posts', postID, 'comments'),
+        orderBy("createdAt", "desc")
+    );
+
+    const unsub = onSnapshot(commentsQuery, (snapshot) => {
+        const commentsArr = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        callback(commentsArr);
+
+        // zustandSet({ isLoading: false })
+    });
+
+    return unsub;
+};

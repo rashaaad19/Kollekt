@@ -2,7 +2,7 @@ import React from "react";
 
 const PeopleMenu = () => {
   return (
-    <div className="hidden xl:block h-full col-start-3 col-end-4  right-4 w-[22rem] ">
+    <div className="hidden xl:block h-full col-start-3 col-end-4  right-4 w-full max-w-[22rem] ">
       <ul className="list bg-base-100 rounded-box shadow-md">
         <li className="p-4 pb-2 text-md font-bold opacity-60 tracking-wide">
           People you may know

@@ -8,6 +8,7 @@ import MoreIcon from "../icons/MoreIcon";
 import { deletePost } from "../../services/firestore_service";
 import userAvatar from "../../assets/avatar-placeholder.png";
 import { useState } from "react";
+import AddCommentForm from "../home/AddCommentForm";
 const Post = ({ post, handlePostEdit, handleViewComments }) => {
   //------------------------------------States-----------------------------
   const currentUser = useStore((state) => state.currentUser);
@@ -30,7 +31,6 @@ const Post = ({ post, handlePostEdit, handleViewComments }) => {
     console.log("clicked");
     setShowCommentInput(!showCommentInput);
   };
-
 
   //------------------------------------Render-----------------------------
   return (
@@ -85,7 +85,7 @@ const Post = ({ post, handlePostEdit, handleViewComments }) => {
       </figure>
 
       {/* Action Icons */}
-      <div className="card-actions justify-start px-2 pt-2">
+      <div className="card-actions justify-start px-2 pt-2 mb-0">
         <button
           className="btn btn-circle btn-ghost btn-sm flex items-center gap-1"
           onClick={() => toggleFavourite(post)}
@@ -113,12 +113,24 @@ const Post = ({ post, handlePostEdit, handleViewComments }) => {
           />
         </button>
       </div>
-      <button
-        onClick={(e) => handleViewComments(e, post)}
-        className="self-start px-2 text-sm text-neutral cursor-pointer"
-      >
-        View all comments
-      </button>
+      {post.favouritesNumber && (
+        <p className="self-start px-4 text-neutral font-bold">
+          {post.favouritesNumber === 1
+            ? "1 like"
+            : `${post.favouritesNumber} likes`}
+        </p>
+      )}
+      {post.commentsCount && (
+        <button
+          onClick={(e) => handleViewComments(e, post)}
+          className="self-start px-4 text-sm text-neutral cursor-pointer underline "
+        >
+          {post.commentsCount == 1
+            ? "View 1 comment"
+            : `View ${post.commentsCount} comments`}
+        </button>
+      )}
+
       {/* TODO: Add Comment Section */}
       <div
         className={`transition-all duration-200 ease-in-out overflow-hidden
@@ -131,14 +143,7 @@ const Post = ({ post, handlePostEdit, handleViewComments }) => {
               <img src={userAvatar} alt="Your Avatar" />
             </div>
           </div>
-          <Input
-            type="text"
-            placeholder="Add a comment..."
-            className="input input-bordered input-sm flex-1 focus:outline-none focus:ring-0 focus:border-primary"
-          />
-          <button className="btn btn-sm btn-primary">
-            <SendIcon />
-          </button>
+          <AddCommentForm postID={post.id} />
         </div>
       </div>
     </div>

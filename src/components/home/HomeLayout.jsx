@@ -15,7 +15,7 @@ const HomeLayout = () => {
   const [imageError, setImageError] = useState("");
   const [posts, setPosts] = useState([]);
   const [clickedPost, setClickedPost] = useState();
-  const [modalType, setModalType] =useState()
+  const [modalType, setModalType] = useState();
   const initializeFavourites = useStore((state) => state.initializeFavourites);
   const initializeBookmarks = useStore((state) => state.initializeBookmarks);
   const currentUser = useStore((state) => state.currentUser);
@@ -89,15 +89,15 @@ const HomeLayout = () => {
     console.log("Edit post:", post);
     console.log(post);
     setClickedPost(post);
-    setModalType('edit')
+    setModalType("edit");
     e.currentTarget.blur();
     document.getElementById("my_modal_2").showModal();
   };
 
-  const handleViewComments = (e,post) => {
+  const handleViewComments = (e, post) => {
     console.log("Show comments!");
     setClickedPost(post);
-    setModalType('comments')
+    setModalType("comments");
     e.currentTarget.blur();
     document.getElementById("my_modal_2").showModal();
   };

@@ -2,6 +2,9 @@ import userAvatar from "../../assets/avatar-placeholder.png";
 import Input from "../layout/Input";
 import SendIcon from "../icons/SendIcon";
 import { formatTimeStamp } from "../../../util/DateConverter";
+import AddCommentForm from "./AddCommentForm";
+import { useEffect, useState } from "react";
+import { getComments } from "../../services/firestore_service";
 const dummyComments = [
   {
     id: "c1",
@@ -66,7 +69,11 @@ const dummyComments = [
 ];
 
 const PostDetails = ({ post }) => {
-
+  const [comments, setComments] = useState([]);
+  useEffect(() => {
+    const unsubscribe = getComments(setComments, post.id);
+    return () => unsubscribe();
+  }, [post.id]);
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       {/* Left: Post content */}
@@ -102,7 +109,7 @@ const PostDetails = ({ post }) => {
       <div className="lg:w-1/3 w-full space-y-4">
         <h3 className="font-semibold text-base-content">Comments</h3>
         <ul className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-          {dummyComments.map((comment) => (
+          {comments.map((comment) => (
             <li
               key={comment.id}
               className="flex items-start gap-3 bg-base-200 px-2 py-4 rounded-md"
@@ -114,9 +121,14 @@ const PostDetails = ({ post }) => {
               </div>
               <div className="text-left">
                 <p className="font-medium text-sm pb-1">{comment.userName}</p>
-                <p className="text-sm text-base-content pb-2">{comment.content}</p>
-                <p className="text-xs text-neutral ">
-                  {formatTimeStamp(comment.timestamp)}
+                <p className="text-sm text-base-content pb-2">
+                  {comment.comment}
+                </p>
+                <p className="text-xs text-neutral h-5 ">
+                  {comment.createdAt &&
+                    formatTimeStamp(
+                      comment.createdAt.toDate().toLocaleString()
+                    )}
                 </p>
               </div>
             </li>
@@ -130,14 +142,7 @@ const PostDetails = ({ post }) => {
               <img src={userAvatar} alt="Your Avatar" />
             </div>
           </div>
-          <Input
-            type="text"
-            placeholder="Add a comment..."
-            className="input input-bordered input-sm flex-1 focus:outline-none"
-          />
-          <button className="btn btn-sm btn-primary">
-            <SendIcon />
-          </button>
+          <AddCommentForm postID={post.id} />
         </div>
       </div>
     </div>
