@@ -1,13 +1,18 @@
-import React from 'react'
-import Sidebar from '../components/home/Sidebar'
+import React from "react";
+import Sidebar from "../components/home/Sidebar";
+import ProtectedRoute from "../components/ProtectedRoute";
+import useStore from "../store/store";
 
 const Profile = () => {
+  const currentUser = useStore(state=>state.currentUser)
+  console.log(currentUser)
   return (
-    <Sidebar>
-          <div>Profile</div>
+    <ProtectedRoute>
+      <Sidebar>
+        <div>Profile</div>
+      </Sidebar>
+    </ProtectedRoute>
+  );
+};
 
-    </Sidebar>
-  )
-}
-
-export default Profile
+export default Profile;

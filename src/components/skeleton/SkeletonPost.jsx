@@ -1,7 +1,6 @@
-
 const SkeletonPost = () => {
   return (
-    <div className="animate-pulse p-4  rounded-xl shadow-md bg-base-100 space-y-4 max-w-xl w-full">
+    <div className="animate-pulse   rounded-xl card bg-base-100  shadow-sm p-4 space-y-3 w-full sm:w-xl">
       {/* Header: Avatar + Name */}
       <div className="flex items-center gap-3">
         <div className="bg-base-300 rounded-full w-10 h-10" />

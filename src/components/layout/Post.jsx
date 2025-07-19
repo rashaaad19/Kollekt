@@ -1,15 +1,18 @@
 import FavsIcon from "../icons/FavsIcon";
 import BookmarksIcon from "../icons/BookmarksIcon";
 import CommentIcon from "../icons/CommentIcon";
-import SendIcon from "../icons/SendIcon";
-import Input from "./Input";
 import useStore from "../../store/store";
 import MoreIcon from "../icons/MoreIcon";
-import { deletePost } from "../../services/firestore_service";
 import userAvatar from "../../assets/avatar-placeholder.png";
-import { useState } from "react";
 import AddCommentForm from "../home/AddCommentForm";
-const Post = ({ post, handlePostEdit, handleViewComments }) => {
+const Post = ({
+  post,
+  handlePostEdit,
+  handleViewComments,
+  handleDelete,
+  handleCommentClick,
+  showCommentInput,
+}) => {
   //------------------------------------States-----------------------------
   const currentUser = useStore((state) => state.currentUser);
   const bookmarks = useStore((state) => state.bookmarks);
@@ -18,19 +21,6 @@ const Post = ({ post, handlePostEdit, handleViewComments }) => {
   const toggleBookmark = useStore((state) => state.toggleBookmark);
   const favourites = useStore((state) => state.favourites);
   const isFavourite = favourites.includes(post.id);
-  const [showCommentInput, setShowCommentInput] = useState(false);
-
-  const handleDelete = (e, postId) => {
-    console.log("Delete post:", postId);
-    e.currentTarget.blur();
-    deletePost(postId);
-    // Show confirmation and delete post from Firestore
-  };
-
-  const handleCommentClick = () => {
-    console.log("clicked");
-    setShowCommentInput(!showCommentInput);
-  };
 
   //------------------------------------Render-----------------------------
   return (
@@ -45,7 +35,7 @@ const Post = ({ post, handlePostEdit, handleViewComments }) => {
           </div>
           <h2 className="font-semibold">{post.userName}</h2>
         </div>
-        {currentUser.uid === post.uid && (
+        {(currentUser&&currentUser.uid === post.uid )&& (
           <div className="dropdown dropdown-end">
             <button tabIndex={0} className="btn btn-sm btn-circle btn-ghost">
               <MoreIcon />

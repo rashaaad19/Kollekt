@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { addBookmarkPost, addFavouritePost, getCurrentUser, getPostByIds, getPosts, getUserDoc, removeBookmarkPost, removeFavouritePost } from "../services/firestore_service";
+import { addBookmarkPost, addFavouritePost, getComments, getCurrentUser, getPostByIds, getPosts, getUserDoc, removeBookmarkPost, removeFavouritePost } from "../services/firestore_service";
 
 const useStore = create(persist((set, get) => ({
 
@@ -9,12 +9,13 @@ const useStore = create(persist((set, get) => ({
     bookmarks: [],
     currentPosts: [],
     currentUser: null,
-    isLoading: false,
+    isLoadingPosts: false,
+    isLoadingComments:false,
 
     //------------------Actions-----------------
 
     getAllPosts: ((setPosts) => {
-        set(({ isLoading: true }))
+        set(({ isLoadingPosts: true }))
         //Pass setter function to control loading state after fetching
         const unsubscribe = getPosts(setPosts, set);
 
@@ -24,7 +25,7 @@ const useStore = create(persist((set, get) => ({
     getFavPosts: (async (setPosts) => {
         const state = get();
 
-        set(({ isLoading: true }));
+        set(({ isLoadingPosts: true }));
         if (state.favourites.length > 0) {
             const favPosts = await getPostByIds(state.favourites, set);
             setPosts(favPosts);
@@ -36,7 +37,7 @@ const useStore = create(persist((set, get) => ({
     getBookmarkPosts: (async (setPosts) => {
         const state = get();
 
-        set(({ isLoading: true }));
+        set(({ isLoadingPosts: true }));
         if (state.bookmarks.length > 0) {
             const bookmarkPosts = await getPostByIds(state.bookmarks, set);
             setPosts(bookmarkPosts);
@@ -45,7 +46,13 @@ const useStore = create(persist((set, get) => ({
         }
 
     }),
+    getPostComments: ( (setComments, postID) => {
+        console.log(postID)
+        set(({ isLoadingComments: true }))
+        const unsubscribe = getComments(setComments, postID, set);
+        return unsubscribe;
 
+    }),
     // Initialize favourites and bookmakrs from Firestore
     initializeFavourites: async (userId) => {
         if (!userId) return;

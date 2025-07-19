@@ -3,17 +3,18 @@ import Sidebar from "../components/home/Sidebar";
 import useStore from "../store/store";
 import Post from "../components/layout/Post";
 import SkeletonPost from "../components/skeleton/SkeletonPost";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const Favourites = () => {
   const currentUser = useStore((state) => state.currentUser);
   const favourites = useStore((state) => state.favourites); // Get current favourites from store
   const initializeFavourites = useStore((state) => state.initializeFavourites);
-  const isLoading = useStore((state) => state.isLoading);
+  const isLoadingPosts = useStore((state) => state.isLoadingPosts);
   const getFavPosts = useStore((state) => state.getFavPosts);
 
   const [posts, setPosts] = useState([]);
 
-  console.log(isLoading);
+  console.log(isLoadingPosts);
 
   // Initialize favourites when component mounts
   //TODO: Custom hook
@@ -29,16 +30,17 @@ const Favourites = () => {
   }, [getFavPosts, favourites]);
 
   return (
-    <Sidebar>
+    <ProtectedRoute>
+      <Sidebar>
         {posts.map((post) => (
           <Post post={post} key={post.id} />
         ))}
-              {isLoading &&
-        Array.from({ length: 6 }).map((_, index) => (
-          <SkeletonPost key={index} />
-        ))}
-
-    </Sidebar>
+        {isLoadingPosts &&
+          Array.from({ length: 6 }).map((_, index) => (
+            <SkeletonPost key={index} />
+          ))}
+      </Sidebar>
+    </ProtectedRoute>
   );
 };
 

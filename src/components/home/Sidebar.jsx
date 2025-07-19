@@ -4,8 +4,10 @@ import HomeIcon from "./../icons/HomeIcon";
 import FavsIcon from "./../icons/FavsIcon";
 import BookmarksIcon from "./../icons/BookmarksIcon";
 import ProfileIcon from "./../icons/ProfileIcon";
+import useStore from "../../store/store";
 
 const Sidebar = ({ children }) => {
+  const currentUser = useStore((state) => state.currentUser);
   return (
     <div className="drawer lg:drawer-open">
       {/* Toggle checkbox for small screens */}
@@ -26,7 +28,7 @@ const Sidebar = ({ children }) => {
         <ul className="menu p-4 w-65 min-h-full bg-base-100 text-base-content border-r border-solid border-base-300">
           <li>
             <NavLink
-              to="/home"
+              to="/"
               className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
             >
               {({ isActive }) => (
@@ -51,58 +53,61 @@ const Sidebar = ({ children }) => {
             </NavLink>
           </li>
 
-          <li>
-            <NavLink
-              to="/favourites"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
-            >
-              {({ isActive }) => (
-                <>
-                  <FavsIcon
-                    isFavourite={isActive}
-                    color="current"
-                    fillColor="oklch(71% 0.143 215.221)"
-                  />
-                  <span
-                    className={`${
-                      isActive
-                        ? "font-bold text-[oklch(71%_0.143_215.221)]"
-                        : "font-medium text-base-content"
-                    }`}
-                  >
-                    Favourites
-                  </span>
-                </>
-              )}
-            </NavLink>
-          </li>
-
-          <li>
-            <NavLink
-              to="/bookmarks"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
-            >
-              {({ isActive }) => (
-                <>
-                  <BookmarksIcon
-                    className="w-5 h-5"
-                    isBookmarked={isActive}
-                    color="current"
-                    fillColor="oklch(71% 0.143 215.221)"
-                  />
-                  <span
-                    className={`${
-                      isActive
-                        ? "font-bold text-[oklch(71%_0.143_215.221)]"
-                        : "font-medium text-base-content"
-                    }`}
-                  >
-                    Bookmarks
-                  </span>
-                </>
-              )}
-            </NavLink>
-          </li>
+          {currentUser && (
+            <li>
+              <NavLink
+                to="/favourites"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
+              >
+                {({ isActive }) => (
+                  <>
+                    <FavsIcon
+                      isFavourite={isActive}
+                      color="current"
+                      fillColor="oklch(71% 0.143 215.221)"
+                    />
+                    <span
+                      className={`${
+                        isActive
+                          ? "font-bold text-[oklch(71%_0.143_215.221)]"
+                          : "font-medium text-base-content"
+                      }`}
+                    >
+                      Favourites
+                    </span>
+                  </>
+                )}
+              </NavLink>
+            </li>
+          )}
+          {currentUser && (
+            <li>
+              <NavLink
+                to="/bookmarks"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
+              >
+                {({ isActive }) => (
+                  <>
+                    <BookmarksIcon
+                      className="w-5 h-5"
+                      isBookmarked={isActive}
+                      color="current"
+                      fillColor="oklch(71% 0.143 215.221)"
+                    />
+                    <span
+                      className={`${
+                        isActive
+                          ? "font-bold text-[oklch(71%_0.143_215.221)]"
+                          : "font-medium text-base-content"
+                      }`}
+                    >
+                      Bookmarks
+                    </span>
+                  </>
+                )}
+              </NavLink>
+            </li>
+          )}
 
           {/*TODO:  Make Profile page */}
           {/* <li>

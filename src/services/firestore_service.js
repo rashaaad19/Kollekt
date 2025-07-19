@@ -65,7 +65,7 @@ export const getPosts = (callback, zustandSet) => {
         }));
         callback(postsArr);
 
-        zustandSet({ isLoading: false })
+        zustandSet({ isLoadingPosts: false })
     });
 
     return unsub;
@@ -82,7 +82,7 @@ export const getPostByIds = async (ids, zustandSet) => {
             });
         }
     });
-    zustandSet({ isLoading: false })
+    zustandSet({ isLoadingPosts: false })
 
     return posts;
 }
@@ -202,7 +202,7 @@ export const addComment = async (commentData, postID) => {
     }
 }
 
-export const getComments = (callback, postID) => {
+export const getComments = (callback, postID, zustandSet) => {
     const commentsQuery = query(
         collection(db, 'posts', postID, 'comments'),
         orderBy("createdAt", "desc")
@@ -215,7 +215,7 @@ export const getComments = (callback, postID) => {
         }));
         callback(commentsArr);
 
-        // zustandSet({ isLoading: false })
+        zustandSet({ isLoadingComments: false })
     });
 
     return unsub;

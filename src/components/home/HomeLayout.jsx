@@ -4,7 +4,7 @@ import PeopleMenu from "./PeopleMenu";
 import NewPost from "./NewPost";
 import Modal from "../layout/Modal";
 import SkeletonPost from "../skeleton/SkeletonPost";
-import { addPost } from "../../services/firestore_service";
+import { addPost, deletePost } from "../../services/firestore_service";
 import useStore from "../../store/store";
 
 const HomeLayout = () => {
@@ -16,13 +16,14 @@ const HomeLayout = () => {
   const [posts, setPosts] = useState([]);
   const [clickedPost, setClickedPost] = useState();
   const [modalType, setModalType] = useState();
+  const [showCommentInput, setShowCommentInput] = useState(false);
   const initializeFavourites = useStore((state) => state.initializeFavourites);
   const initializeBookmarks = useStore((state) => state.initializeBookmarks);
   const currentUser = useStore((state) => state.currentUser);
   const getAllPosts = useStore((state) => state.getAllPosts);
-  const isLoading = useStore((state) => state.isLoading);
+  const isLoadingPosts = useStore((state) => state.isLoadingPosts);
   const fileInputRef = useRef();
-
+  console.log(currentUser);
   //------------------------------------Handlers-----------------------------
 
   //TODO: Custom hook
@@ -102,6 +103,21 @@ const HomeLayout = () => {
     document.getElementById("my_modal_2").showModal();
   };
 
+  const handleDelete = (e, postId) => {
+    console.log("Delete post:", postId);
+    e.currentTarget.blur();
+    deletePost(postId);
+    // Show confirmation and delete post from Firestore
+  };
+
+  const handleCommentClick = () => {
+    console.log("clicked");
+    if (!currentUser) {
+      return;
+    }
+    setShowCommentInput(!showCommentInput);
+  };
+
   //------------------------------------Render-----------------------------
 
   return (
@@ -110,27 +126,32 @@ const HomeLayout = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 bg-base-200 px-10 py-5">
         <div className="lg:col-span-2 flex flex-col gap-10">
-          <NewPost
-            postImage={postImage}
-            handlePostSubmit={handlePostSubmit}
-            handleImageSelect={handleImageSelect}
-            handleCancelImg={handleCancelImg}
-            handlePhotoClick={handlePhotoClick}
-            handlePostChange={handlePostChange}
-            imageError={imageError}
-            fileInputRef={fileInputRef}
-          />
+          {currentUser && (
+            <NewPost
+              postImage={postImage}
+              handlePostSubmit={handlePostSubmit}
+              handleImageSelect={handleImageSelect}
+              handleCancelImg={handleCancelImg}
+              handlePhotoClick={handlePhotoClick}
+              handlePostChange={handlePostChange}
+              imageError={imageError}
+              fileInputRef={fileInputRef}
+            />
+          )}
 
-          {!isLoading &&
+          {!isLoadingPosts &&
             posts.map((post) => (
               <Post
                 post={post}
                 key={post.id}
                 handlePostEdit={handleEdit}
                 handleViewComments={handleViewComments}
+                handleDelete={handleDelete}
+                handleCommentClick={handleCommentClick}
+                showCommentInput={showCommentInput}
               />
             ))}
-          {isLoading &&
+          {isLoadingPosts &&
             Array.from({ length: 6 }).map((_, index) => (
               <SkeletonPost key={index} />
             ))}

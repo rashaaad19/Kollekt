@@ -1,7 +1,9 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-
+html {
+  scrollbar-gutter: auto !important;
+}
 /* @plugin "daisyui/theme" {
     name: "silk";
     default: true;

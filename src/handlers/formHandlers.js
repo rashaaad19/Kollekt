@@ -11,7 +11,7 @@ export const handleLogin = async (values, setErrors, navigate, setCurrentUser) =
         );
         setCurrentUser();
         console.log("Sign in successfully ");
-        navigate("/home");
+        navigate("/");
     } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -43,7 +43,7 @@ export const handleSignup = async (values, setErrors, navigate, setCurrentUser) 
         createUser(user)
         setCurrentUser();
         console.log("Signup successfully ", user);
-        navigate("/home");
+        navigate("/");
     } catch (error) {
         const errorCode = error.code;
         if (errorCode === 'auth/email-already-in-use') {

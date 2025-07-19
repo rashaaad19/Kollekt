@@ -15,7 +15,7 @@ function App() {
       element: <Root />,
       children: [
         {
-          path: "/",
+          path: "/signup",
           element: <Signup />,
         },
         {
@@ -23,7 +23,7 @@ function App() {
           element: <Login />,
         },
         {
-          path:"/home",
+          path:"/",
           element:<Home/>
         },
         {
