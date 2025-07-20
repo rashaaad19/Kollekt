@@ -10,7 +10,6 @@ const LoginForm = () => {
   const setCurrentUser = useStore((state) => state.setCurrentUser);
   const initializeUserDoc = useStore((state) => state.initializeUserDoc);
 
-
   // const handleSignUp = async (event) => {
 
   //   try {
@@ -42,8 +41,14 @@ const LoginForm = () => {
         }}
         validationSchema={loginSchema}
         onSubmit={(values, { setSubmitting, setErrors }) => {
-          handleLogin(values, setErrors, navigate,setCurrentUser,initializeUserDoc);
-          setSubmitting(false);
+          handleLogin(
+            values,
+            setErrors,
+            navigate,
+            setCurrentUser,
+            initializeUserDoc,
+            setSubmitting
+          );
         }}
       >
         {({ isSubmitting, errors }) => (
@@ -100,7 +105,11 @@ const LoginForm = () => {
               type="submit"
               className="btn btn-primary mt-4 w-45  "
             >
-              Login
+              {isSubmitting ? (
+                <span className="loading loading-spinner loading-xs"></span>
+              ) : (
+                "Login"
+              )}
             </button>
           </Form>
         )}

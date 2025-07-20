@@ -2,7 +2,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, up
 import { auth } from "../firebase";
 import { createUser, updatePost } from "../services/firestore_service";
 
-export const handleLogin = async (values, setErrors, navigate, setCurrentUser,initializeUserDoc) => {
+export const handleLogin = async (values, setErrors, navigate, setCurrentUser, initializeUserDoc, setSubmitting) => {
     try {
         const userCredential = await signInWithEmailAndPassword(
             auth,
@@ -11,8 +11,8 @@ export const handleLogin = async (values, setErrors, navigate, setCurrentUser,in
         );
         setCurrentUser();
         initializeUserDoc(userCredential.user.uid)
-
-        navigate("/",{replace:true});
+        navigate("/", { replace: true });
+        setSubmitting(false);
     } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -26,7 +26,7 @@ export const handleLogin = async (values, setErrors, navigate, setCurrentUser,in
     }
 }
 
-export const handleSignup = async (values, setErrors, navigate, setCurrentUser, initializeUserDoc) => {
+export const handleSignup = async (values, setErrors, navigate, setCurrentUser, initializeUserDoc,setSubmitting) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(
             auth,
@@ -44,7 +44,8 @@ export const handleSignup = async (values, setErrors, navigate, setCurrentUser, 
         createUser(user)
         setCurrentUser();
         initializeUserDoc(user.uid)
-        navigate("/",{replace:true});
+        navigate("/", { replace: true });
+        setSubmitting(false);
     } catch (error) {
         const errorCode = error.code;
         if (errorCode === 'auth/email-already-in-use') {

@@ -9,7 +9,6 @@ export const formatTimeStamp = (timestamp) => {
 
 
 export const getTimeAgo = (timestamp) => {
-  // e.g., "an hour ago", "10 minutes ago"
   return dayjs(timestamp.toDate()).fromNow(); 
 }
 

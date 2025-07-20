@@ -10,7 +10,6 @@ const PostDetails = ({ post }) => {
   const getPostComments = useStore((state) => state.getPostComments);
   const isLoadingComments = useStore((state) => state.isLoadingComments);
   const currentUser = useStore((state) => state.currentUser);
-console.log(post.createdAt)
   useEffect(() => {
     setComments([]); 
     const unsubscribe = getPostComments(setComments, post.id);

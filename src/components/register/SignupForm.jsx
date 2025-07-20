@@ -11,7 +11,6 @@ const SignupForm = () => {
   const initializeUserDoc = useStore((state) => state.initializeUserDoc);
 
   return (
-    
     <Formik
       initialValues={{
         name: "",
@@ -20,8 +19,14 @@ const SignupForm = () => {
       }}
       validationSchema={signupSchema}
       onSubmit={(values, { setSubmitting, setErrors }) => {
-        handleSignup(values, setErrors, navigate,setCurrentUser, initializeUserDoc);
-        setSubmitting(false);
+        handleSignup(
+          values,
+          setErrors,
+          navigate,
+          setCurrentUser,
+          initializeUserDoc,
+          setSubmitting
+        );
       }}
     >
       {({ isSubmitting, errors }) => (
@@ -37,7 +42,6 @@ const SignupForm = () => {
             </p>
           </div>
           <div className="flex flex-col items-start">
-
             {/*----------------------Inputs------------------- */}
 
             <FormInput
@@ -86,7 +90,11 @@ const SignupForm = () => {
             type="submit"
             className="btn btn-primary mt-4 w-45  "
           >
-            Signup
+            {isSubmitting ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              "Signup"
+            )}
           </button>
         </Form>
       )}
