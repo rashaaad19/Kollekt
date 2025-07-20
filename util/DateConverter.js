@@ -2,13 +2,11 @@ import dayjs from "dayjs";
  import relativeTime from "dayjs/plugin/relativeTime"
 dayjs.extend(relativeTime);
 
+
 export const formatTimeStamp = (timestamp) => {
-  const date = new Date(timestamp);
-  return date.toLocaleString("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  return dayjs(timestamp).format("MMM D, YYYY h:mm A");
 };
+
 
 export const getTimeAgo = (timestamp) => {
   // e.g., "an hour ago", "10 minutes ago"
