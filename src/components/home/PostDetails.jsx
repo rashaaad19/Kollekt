@@ -11,9 +11,10 @@ const PostDetails = ({ post }) => {
   const isLoadingComments = useStore((state) => state.isLoadingComments);
   const currentUser = useStore((state) => state.currentUser);
 
-  console.log(isLoadingComments);
   useEffect(() => {
+    setComments([]); 
     const unsubscribe = getPostComments(setComments, post.id);
+    
     return () => unsubscribe();
   }, [getPostComments, post.id]);
 
@@ -60,7 +61,7 @@ const PostDetails = ({ post }) => {
               >
                 <div className="avatar">
                   <div className="w-8 rounded-full">
-                    <img src={userAvatar} alt="User" />
+                  <img src={userAvatar} alt="User" />
                   </div>
                 </div>
                 <div className="text-left">

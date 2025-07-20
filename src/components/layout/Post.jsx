@@ -5,6 +5,7 @@ import useStore from "../../store/store";
 import MoreIcon from "../icons/MoreIcon";
 import userAvatar from "../../assets/avatar-placeholder.png";
 import AddCommentForm from "../home/AddCommentForm";
+import { getTimeAgo } from "../../../util/DateConverter";
 const Post = ({
   post,
   handlePostEdit,
@@ -15,13 +16,14 @@ const Post = ({
 }) => {
   //------------------------------------States-----------------------------
   const currentUser = useStore((state) => state.currentUser);
+  const userDoc = useStore((state) => state.userDoc);
+
   const bookmarks = useStore((state) => state.bookmarks);
   const isBookmarked = bookmarks.some((bookmark) => bookmark === post.id);
   const toggleFavourite = useStore((state) => state.toggleFavourite);
   const toggleBookmark = useStore((state) => state.toggleBookmark);
   const favourites = useStore((state) => state.favourites);
   const isFavourite = favourites.includes(post.id);
-
   //------------------------------------Render-----------------------------
   return (
     <div className="card bg-base-100  shadow-sm p-4 space-y-3 w-full sm:w-xl">
@@ -34,8 +36,11 @@ const Post = ({
             </div>
           </div>
           <h2 className="font-semibold">{post.userName}</h2>
+          {post.createdAt && (
+            <p className="text-xs text-neutral">{getTimeAgo(post.createdAt)}</p>
+          )}
         </div>
-        {(currentUser&&currentUser.uid === post.uid )&& (
+        {currentUser && currentUser.uid === post.uid && (
           <div className="dropdown dropdown-end">
             <button tabIndex={0} className="btn btn-sm btn-circle btn-ghost">
               <MoreIcon />
@@ -103,7 +108,7 @@ const Post = ({
           />
         </button>
       </div>
-      {post.favouritesNumber && (
+      {post.favouritesNumber > 0 && (
         <p className="self-start px-4 text-neutral font-bold">
           {post.favouritesNumber === 1
             ? "1 like"

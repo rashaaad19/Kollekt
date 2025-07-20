@@ -1,16 +1,31 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
+import React, { useEffect } from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
+import useStore from "../store/store";
+import { ToastContainer } from 'react-toastify';
 
 const Root = () => {
-  return (
-    <div clas>
-    <Navbar/>
-    <Outlet/>
-    <Footer/>
-    </div>
-  )
-}
+  const initializeUserDoc = useStore((state) => state.initializeUserDoc);
+  const currentUser = useStore((state) => state.currentUser);
+  const location = useLocation();
+  useEffect(() => {
+    if (currentUser) {
+      initializeUserDoc(currentUser.uid);
+    }
+  }, [initializeUserDoc, currentUser]);
 
-export default Root
+  if(currentUser && (location.pathname==='/signup'||location.pathname==='/login')){
+    return <Navigate to={'/'} replace/>
+  }
+  return (
+    <div>
+      <ToastContainer />
+      <Navbar />
+      <Outlet />
+      <Footer />
+    </div>
+  );
+};
+
+export default Root;

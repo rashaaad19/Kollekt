@@ -2,6 +2,7 @@ import React from "react";
 import Sidebar from "../components/home/Sidebar";
 import ProtectedRoute from "../components/ProtectedRoute";
 import useStore from "../store/store";
+import ProfileLayout from "../components/profile/ProfileLayout";
 
 const Profile = () => {
   const currentUser = useStore(state=>state.currentUser)
@@ -9,7 +10,7 @@ const Profile = () => {
   return (
     <ProtectedRoute>
       <Sidebar>
-        <div>Profile</div>
+       <ProfileLayout user={currentUser}/>
       </Sidebar>
     </ProtectedRoute>
   );

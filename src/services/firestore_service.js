@@ -1,6 +1,12 @@
 import { doc, setDoc, serverTimestamp, addDoc, collection, onSnapshot, query, orderBy, updateDoc, deleteDoc, arrayUnion, arrayRemove, getDoc, where, documentId, getDocs, increment } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { toast } from 'react-toastify';
+
+
+
+
+//------------------User auth and doc functions-----------------
 
 export const createUser = async (userData) => {
     console.log(userData);
@@ -10,12 +16,50 @@ export const createUser = async (userData) => {
             userName: userData.displayName,
             uid: userData.uid,
             createdAt: serverTimestamp(),
+            favourites: [],
+            bookmarks: [],
+
+
         });
         console.log("Document successfully written with ID: ", userData.uid);
     } catch (e) {
         console.error("Error adding document: ", e);
     }
 };
+
+export const updateUser = async (img, uid) => {
+    const userRef = doc(db, 'users', uid);
+
+    try {
+        const postsRef = collection(db, 'posts');
+        const postsQuery = query(postsRef, where('uid', '==', uid));
+        const querySnapshot = await getDocs(postsQuery);
+
+        if (querySnapshot.empty) {
+            console.log('ℹ️ No posts found for this user.');
+            return;
+        }
+
+        const updatePromises = querySnapshot.docs.map((docSnap) => {
+            console.log('Updating post:', docSnap.id);
+            return updateDoc(doc(db, 'posts', docSnap.id), {
+                userImage: img
+            });
+        });
+
+        await Promise.all(updatePromises);
+        await updateDoc(userRef, {
+            photoURL: img
+        });
+        console.log('✅ User image updated in user document');
+        console.log('✅ User image updated in all posts');
+    } catch (error) {
+        console.error('❌ Error updating image:', error);
+        throw new Error(error)
+
+    }
+};
+
 
 export const getCurrentUser = () => {
     return new Promise((resolve) => {
@@ -27,30 +71,46 @@ export const getCurrentUser = () => {
 };
 
 
-export const getUserDoc = async (uid) => {
+export const getUserDoc = async (uid, zustandSet) => {
+
     const userRef = doc(db, 'users', uid);
     const userDoc = await getDoc(userRef);
+    zustandSet({ isLoadingUserDoc: false })
     return userDoc.data()
 }
 
+export const getUserById = async (uid) => {
+    if (!uid) return null;
+    const userRef = doc(db, 'users', uid);
+    const userDoc = await getDoc(userRef);
+    return userDoc.exists() ? userDoc.data() : null;
+};
+
+
+//------------------Posts functions-----------------
+
 export const addPost = async (userData, post) => {
+    const postsRef = collection(db, "posts");
+    const userRef = doc(db, 'users', userData.uid);
+
     try {
-        const postsRef = collection(db, "posts");
         await addDoc(postsRef, {
-            userName: userData.displayName,
-            userImage: userData.photoURL,
+            userName: userData.userName,
+            userImage: userData.photoURL || '',
             uid: userData.uid,
             createdAt: serverTimestamp(),
             postContent: post.content,
             image: post.image,
         });
+        await updateDoc(userRef, {
+            postsNumber: increment(1),
+        })
         console.log("Document successfully written with ID: ", userData.uid);
     } catch (e) {
         console.error("Error adding document: ", e);
     }
 
 }
-
 
 export const getPosts = (callback, zustandSet) => {
     const postsQuery = query(
@@ -97,11 +157,16 @@ export const updatePost = async (id, values) => {
     })
 }
 
-export const deletePost = async (id) => {
+export const deletePost = async (id, userData) => {
     const postRef = doc(db, 'posts', id);
+    const userRef = doc(db, 'users', userData.uid)
     await deleteDoc(postRef, id)
-}
+    await updateDoc(userRef, {
+        postsNumber: increment(-1),
+    })
 
+
+}
 
 export const addFavouritePost = async (userData, postId) => {
     console.log(userData, postId)
@@ -141,9 +206,6 @@ export const removeFavouritePost = async (userData, postId) => {
 
 };
 
-
-
-
 export const addBookmarkPost = async (userData, postId) => {
     const userRef = doc(db, 'users', userData.uid);
     const postRef = doc(db, "posts", postId);
@@ -178,6 +240,10 @@ export const removeBookmarkPost = async (userData, postId) => {
 }
 
 
+
+//------------------Comments functions-----------------
+
+
 export const addComment = async (commentData, postID) => {
     const commentsRef = collection(db, 'posts', postID, 'comments');
     const postRef = doc(db, 'posts', postID)
@@ -191,6 +257,7 @@ export const addComment = async (commentData, postID) => {
             createdAt: serverTimestamp(),
             comment: commentData.comment,
 
+
         })
         await updateDoc(postRef, {
             commentsCount: increment(1),
@@ -202,7 +269,7 @@ export const addComment = async (commentData, postID) => {
     }
 }
 
-export const getComments = (callback, postID, zustandSet) => {
+export const getComments = (callback, postID) => {
     const commentsQuery = query(
         collection(db, 'posts', postID, 'comments'),
         orderBy("createdAt", "desc")
@@ -215,7 +282,6 @@ export const getComments = (callback, postID, zustandSet) => {
         }));
         callback(commentsArr);
 
-        zustandSet({ isLoadingComments: false })
     });
 
     return unsub;

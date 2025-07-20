@@ -20,12 +20,12 @@ const HomeLayout = () => {
   const initializeFavourites = useStore((state) => state.initializeFavourites);
   const initializeBookmarks = useStore((state) => state.initializeBookmarks);
   const currentUser = useStore((state) => state.currentUser);
+  const userDoc = useStore((state) => state.userDoc);
+
   const getAllPosts = useStore((state) => state.getAllPosts);
   const isLoadingPosts = useStore((state) => state.isLoadingPosts);
   const fileInputRef = useRef();
-  console.log(currentUser);
   //------------------------------------Handlers-----------------------------
-
   //TODO: Custom hook
   useEffect(() => {
     if (currentUser?.uid) {
@@ -58,8 +58,9 @@ const HomeLayout = () => {
       content: newPost,
       author: currentUser.displayName,
       image: postImage,
+      
     };
-    addPost(currentUser, postData);
+    addPost(userDoc, postData);
   };
 
   const handleImageSelect = (e) => {
@@ -106,12 +107,11 @@ const HomeLayout = () => {
   const handleDelete = (e, postId) => {
     console.log("Delete post:", postId);
     e.currentTarget.blur();
-    deletePost(postId);
+    deletePost(postId, currentUser);
     // Show confirmation and delete post from Firestore
   };
 
   const handleCommentClick = () => {
-    console.log("clicked");
     if (!currentUser) {
       return;
     }

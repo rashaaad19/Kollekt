@@ -9,7 +9,7 @@ import useStore from "../../store/store";
 const Sidebar = ({ children }) => {
   const currentUser = useStore((state) => state.currentUser);
   return (
-    <div className="drawer lg:drawer-open">
+    <div className="drawer lg:drawer-open min-h-screen">
       {/* Toggle checkbox for small screens */}
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
 
@@ -110,7 +110,7 @@ const Sidebar = ({ children }) => {
           )}
 
           {/*TODO:  Make Profile page */}
-          {/* <li>
+{currentUser&&          <li>
             <NavLink
               to="/profile"
               className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors"
@@ -130,8 +130,8 @@ const Sidebar = ({ children }) => {
                 </>
               )}
             </NavLink>
-          </li> */}
-        </ul>
+          </li>
+}        </ul>
       </div>
     </div>
   );

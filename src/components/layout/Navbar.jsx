@@ -8,10 +8,10 @@ import userAvatar from "../../assets/avatar-placeholder.png";
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location.pathname);
   const signoutUser = useStore((state) => state.signoutUser);
   const currentUser = useStore((state) => state.currentUser);
-  console.log(currentUser);
+  const userDoc = useStore((state)=>state.userDoc);
+  console.log(userDoc)
   return (
     <div className="navbar bg-primary text-primary-content shadow-sm">
       {/* Mobile drawer toggle button (hamburger icon) */}

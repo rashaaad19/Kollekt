@@ -8,6 +8,7 @@ import useStore from "../../store/store";
 const LoginForm = () => {
   const navigate = useNavigate();
   const setCurrentUser = useStore((state) => state.setCurrentUser);
+  const initializeUserDoc = useStore((state) => state.initializeUserDoc);
 
 
   // const handleSignUp = async (event) => {
@@ -41,7 +42,7 @@ const LoginForm = () => {
         }}
         validationSchema={loginSchema}
         onSubmit={(values, { setSubmitting, setErrors }) => {
-          handleLogin(values, setErrors, navigate,setCurrentUser);
+          handleLogin(values, setErrors, navigate,setCurrentUser,initializeUserDoc);
           setSubmitting(false);
           console.log(values);
         }}

@@ -6,7 +6,9 @@ import { addComment } from "../../services/firestore_service";
 
 const AddCommentForm = ({ postID }) => {
   const currentUser = useStore((state) => state.currentUser);
-  console.log(currentUser);
+  //userDoc has the user image, currentUser does not
+  const userDoc = useStore((state) => state.currentUser);
+
   const handleAddComment = (values, setSubmitting, resetForm) => {
     console.log(values, postID);
     addComment(
@@ -14,6 +16,7 @@ const AddCommentForm = ({ postID }) => {
         uid: currentUser.uid,
         userName: currentUser.displayName,
         comment: values.comment,
+        userImg:userDoc.photoURL
       },
       postID
     );
