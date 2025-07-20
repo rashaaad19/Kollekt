@@ -22,7 +22,6 @@ const SignupForm = () => {
       onSubmit={(values, { setSubmitting, setErrors }) => {
         handleSignup(values, setErrors, navigate,setCurrentUser, initializeUserDoc);
         setSubmitting(false);
-        console.log(values);
       }}
     >
       {({ isSubmitting, errors }) => (

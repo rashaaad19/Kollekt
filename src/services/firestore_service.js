@@ -9,7 +9,6 @@ import { toast } from 'react-toastify';
 //------------------User auth and doc functions-----------------
 
 export const createUser = async (userData) => {
-    console.log(userData);
     try {
         const userRef = doc(db, "users", userData.uid);
         await setDoc(userRef, {
@@ -21,7 +20,6 @@ export const createUser = async (userData) => {
 
 
         });
-        console.log("Document successfully written with ID: ", userData.uid);
     } catch (e) {
         console.error("Error adding document: ", e);
     }
@@ -36,12 +34,10 @@ export const updateUser = async (img, uid) => {
         const querySnapshot = await getDocs(postsQuery);
 
         if (querySnapshot.empty) {
-            console.log('ℹ️ No posts found for this user.');
             return;
         }
 
         const updatePromises = querySnapshot.docs.map((docSnap) => {
-            console.log('Updating post:', docSnap.id);
             return updateDoc(doc(db, 'posts', docSnap.id), {
                 userImage: img
             });
@@ -51,8 +47,6 @@ export const updateUser = async (img, uid) => {
         await updateDoc(userRef, {
             photoURL: img
         });
-        console.log('✅ User image updated in user document');
-        console.log('✅ User image updated in all posts');
     } catch (error) {
         console.error('❌ Error updating image:', error);
         throw new Error(error)
@@ -105,7 +99,6 @@ export const addPost = async (userData, post) => {
         await updateDoc(userRef, {
             postsNumber: increment(1),
         })
-        console.log("Document successfully written with ID: ", userData.uid);
     } catch (e) {
         console.error("Error adding document: ", e);
     }
@@ -149,7 +142,6 @@ export const getPostByIds = async (ids, zustandSet) => {
 
 export const updatePost = async (id, values) => {
     const postRef = doc(db, 'posts', id);
-    console.log(values)
     await updateDoc(postRef, {
         postContent: values.postContent,
         image: values.image,
@@ -169,7 +161,6 @@ export const deletePost = async (id, userData) => {
 }
 
 export const addFavouritePost = async (userData, postId) => {
-    console.log(userData, postId)
     const userRef = doc(db, "users", userData.uid);
     const postRef = doc(db, "posts", postId);
 
@@ -180,7 +171,6 @@ export const addFavouritePost = async (userData, postId) => {
         await updateDoc(postRef, {
             favouritesNumber: increment(1),
         })
-        console.log("Post added to favourites");
     } catch (error) {
         console.error("Error adding to favourites:", error);
     }
@@ -199,7 +189,6 @@ export const removeFavouritePost = async (userData, postId) => {
             favouritesNumber: increment(-1),
         })
 
-        console.log("Post removed from favourites", postId);
     } catch (error) {
         console.error("Error removing from favourites:", error);
     }
@@ -217,7 +206,6 @@ export const addBookmarkPost = async (userData, postId) => {
         await updateDoc(postRef, {
             bookmarksNumber: increment(1),
         })
-        console.log('Post added to bookmarks')
     } catch (error) {
         console.log("Error adding to bookmarks: ", error)
     }
@@ -233,7 +221,6 @@ export const removeBookmarkPost = async (userData, postId) => {
         await updateDoc(postRef, {
             bookmarksNumber: increment(-1),
         })
-        console.log('Post removed from bookmarks')
     } catch (error) {
         console.log("Error removing from bookmarks: ", error)
     }
@@ -247,7 +234,6 @@ export const removeBookmarkPost = async (userData, postId) => {
 export const addComment = async (commentData, postID) => {
     const commentsRef = collection(db, 'posts', postID, 'comments');
     const postRef = doc(db, 'posts', postID)
-    console.log(commentData)
     try {
         //Add the new comment to the sub collection
         await addDoc(commentsRef, {
@@ -263,7 +249,6 @@ export const addComment = async (commentData, postID) => {
             commentsCount: increment(1),
         })
 
-        console.log('Added comment', commentData.comment, ' To post: ', postID, ' Successfully')
     } catch (error) {
         console.log('Error adding comment to post: ', postID, error)
     }

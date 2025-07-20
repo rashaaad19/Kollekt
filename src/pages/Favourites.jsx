@@ -18,7 +18,6 @@ const Favourites = () => {
   const [clickedPost, setClickedPost] = useState();
   const [modalType, setModalType] = useState();
 
-  console.log(isLoadingPosts);
 
   // Initialize favourites when component mounts
   //TODO: Custom hook
@@ -34,7 +33,6 @@ const Favourites = () => {
   }, [getFavPosts, favourites]);
 
   const handleViewComments = (e, post) => {
-    console.log("Show comments!");
     setClickedPost(post);
     setModalType("comments");
     e.currentTarget.blur();

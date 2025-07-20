@@ -11,7 +11,6 @@ const Navbar = () => {
   const signoutUser = useStore((state) => state.signoutUser);
   const currentUser = useStore((state) => state.currentUser);
   const userDoc = useStore((state)=>state.userDoc);
-  console.log(userDoc)
   return (
     <div className="navbar bg-primary text-primary-content shadow-sm">
       {/* Mobile drawer toggle button (hamburger icon) */}

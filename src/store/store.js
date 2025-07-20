@@ -39,7 +39,6 @@ const useStore = create(persist((set, get) => ({
                 isLoadingUserImg: false
             }));
         } catch (error) {
-            console.error("❌ Failed to update Firestore:", error);
             set({ isLoadingUserImg: false });
             toast.error('Error: Images must be < 500kb')
 
@@ -48,7 +47,6 @@ const useStore = create(persist((set, get) => ({
     ,
     setCurrentUser: async () => {
         const user = await getCurrentUser();
-        console.log(user);
         set({ currentUser: user })
     },
     signoutUser: (() => set(() => ({ currentUser: null })))
@@ -153,15 +151,12 @@ const useStore = create(persist((set, get) => ({
             if (isFavourite) {
                 set({ favourites: state.favourites.filter(id => id !== post.id) });
                 await removeFavouritePost(state.currentUser, post.id);
-                console.log('removed')
 
             } else {
                 set({ favourites: [...state.favourites, post.id] });
                 await addFavouritePost(state.currentUser, post.id);
-                console.log('added')
             }
         } catch (error) {
-            console.error("Error toggling favourite:", error);
             //revert UI state 
             set({ favourites: state.favourites });
 
@@ -177,17 +172,14 @@ const useStore = create(persist((set, get) => ({
             if (isBookmarked) {
                 set({ bookmarks: state.bookmarks.filter(id => id !== post.id) });
                 await removeBookmarkPost(state.currentUser, post.id);
-                console.log('removed')
             }
             else {
                 set({ bookmarks: [...state.bookmarks, post.id] });
                 await addBookmarkPost(state.currentUser, post.id);
-                console.log('added')
 
             }
 
         } catch (error) {
-            console.error("Error toggling bookmark:", error);
             //revert UI state 
             set({ bookmarks: state.bookmarks });
 

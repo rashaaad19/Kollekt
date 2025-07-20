@@ -51,7 +51,6 @@ const HomeLayout = () => {
       setImageError("An image is required to submit a post.");
       return;
     }
-    console.log(newPost, "from submit handler");
     e.target.reset();
     setPostImage(null);
     const postData = {
@@ -71,7 +70,6 @@ const HomeLayout = () => {
       reader.readAsDataURL(file);
       reader.onloadend = () => {
         const base64String = reader.result;
-        console.log(base64String);
         setPostImage(base64String);
       };
     } else {
@@ -88,8 +86,6 @@ const HomeLayout = () => {
   };
 
   const handleEdit = (e, post) => {
-    console.log("Edit post:", post);
-    console.log(post);
     setClickedPost(post);
     setModalType("edit");
     e.currentTarget.blur();
@@ -97,7 +93,6 @@ const HomeLayout = () => {
   };
 
   const handleViewComments = (e, post) => {
-    console.log("Show comments!");
     setClickedPost(post);
     setModalType("comments");
     e.currentTarget.blur();
@@ -105,7 +100,6 @@ const HomeLayout = () => {
   };
 
   const handleDelete = (e, postId) => {
-    console.log("Delete post:", postId);
     e.currentTarget.blur();
     deletePost(postId, currentUser);
     // Show confirmation and delete post from Firestore

@@ -10,7 +10,6 @@ const AddCommentForm = ({ postID }) => {
   const userDoc = useStore((state) => state.currentUser);
 
   const handleAddComment = (values, setSubmitting, resetForm) => {
-    console.log(values, postID);
     addComment(
       {
         uid: currentUser.uid,

@@ -44,7 +44,6 @@ const LoginForm = () => {
         onSubmit={(values, { setSubmitting, setErrors }) => {
           handleLogin(values, setErrors, navigate,setCurrentUser,initializeUserDoc);
           setSubmitting(false);
-          console.log(values);
         }}
       >
         {({ isSubmitting, errors }) => (

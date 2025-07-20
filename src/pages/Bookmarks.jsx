@@ -32,7 +32,6 @@ const Bookmarks = () => {
   }, [getBookmarkPosts, currentBookmarks]);
 
   const handleViewComments = (e, post) => {
-    console.log("Show comments!");
     setClickedPost(post);
     setModalType("comments");
     e.currentTarget.blur();

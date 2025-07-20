@@ -12,7 +12,6 @@ export const handleLogin = async (values, setErrors, navigate, setCurrentUser,in
         setCurrentUser();
         initializeUserDoc(userCredential.user.uid)
 
-        console.log("Sign in successfully ");
         navigate("/",{replace:true});
     } catch (error) {
         const errorCode = error.code;
@@ -45,7 +44,6 @@ export const handleSignup = async (values, setErrors, navigate, setCurrentUser, 
         createUser(user)
         setCurrentUser();
         initializeUserDoc(user.uid)
-        console.log("Signup successfully ", user);
         navigate("/",{replace:true});
     } catch (error) {
         const errorCode = error.code;
@@ -63,7 +61,6 @@ export const handleSignout = async (navigate, signoutUser) => {
     try {
         await signOut(auth);
         signoutUser();
-        console.log("Sign-out successful.");
         navigate('/')
     } catch (error) {
         console.error("An error occurred during sign-out:", error);
